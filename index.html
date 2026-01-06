@@ -264,7 +264,7 @@
     }
 
     // --- LOGIC ---
-    const CONFIG = { initialCredits: 3, appVersion: "2.5.0 (Mobile Fix)" };
+    const CONFIG = { initialCredits: 3, appVersion: "2.6.0 (PDF Fix)" };
     let userCredits = parseInt(localStorage.getItem("cv_credits"));
     if (isNaN(userCredits)) { userCredits = CONFIG.initialCredits; localStorage.setItem("cv_credits", userCredits); }
     
@@ -339,14 +339,47 @@
     }
     updatePreview();
 
+    // --- NEW PDF ENGINE (SILENT CLONE FOR MOBILE) ---
     async function generatePDF() {
-        if (userCredits <= 0) { alert("⚠️ LIMITE ATINGIDO! Contate o suporte."); return; }
-        const btn = document.querySelector('.btn-primary'); const old = btn.innerHTML;
-        btn.innerHTML = "⏳ Gerando..."; btn.disabled = true;
+        if (userCredits <= 0) { 
+            alert("⚠️ LIMITE ATINGIDO! Contate o suporte."); 
+            return; 
+        }
+
+        const btn = document.querySelector('.btn-primary'); 
+        const oldTxt = btn.innerHTML;
+        btn.innerHTML = "⏳ Processando..."; 
+        btn.disabled = true;
+
         try {
-            const el = document.getElementById('cv-paper');
-            const canvas = await html2canvas(el, { scale: 2, useCORS: true });
+            // 1. CLONAR O CURRÍCULO
+            const original = document.getElementById('cv-paper');
+            const clone = original.cloneNode(true);
+
+            // 2. CONFIGURAR O CLONE (A4 PERFEITO SEM ZOOM)
+            clone.style.transform = "none"; 
+            clone.style.position = "fixed";
+            clone.style.top = "-9999px"; // Escondido
+            clone.style.left = "0";
+            clone.style.width = "210mm";
+            clone.style.minHeight = "297mm";
+            clone.style.zIndex = "-1";
+            clone.style.margin = "0";
             
+            document.body.appendChild(clone);
+
+            // 3. GERAR A IMAGEM
+            const canvas = await html2canvas(clone, { 
+                scale: 2, 
+                useCORS: true,
+                logging: false,
+                windowWidth: 1200 // Força render de Desktop
+            });
+            
+            // 4. LIMPAR
+            document.body.removeChild(clone);
+
+            // 5. SALVAR PDF
             const { jsPDF } = window.jspdf; 
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfW = pdf.internal.pageSize.getWidth();
@@ -354,10 +387,20 @@
             
             pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdfW, pdfH);
             
-            userCredits--; localStorage.setItem("cv_credits", userCredits); updateCreditsUI();
-            pdf.save(`curriculo_${document.getElementById('nome').value.replace(/[^a-z0-9]/gi, '_')}.pdf`);
-        } catch (e) { alert("Erro: " + e.message); }
-        btn.innerHTML = old; btn.disabled = false;
+            userCredits--; 
+            localStorage.setItem("cv_credits", userCredits); 
+            updateCreditsUI();
+
+            const safeName = document.getElementById('nome').value.replace(/[^a-z0-9]/gi, '_') || "meu_curriculo";
+            pdf.save(`Curriculo_${safeName}.pdf`);
+
+        } catch (e) { 
+            alert("Erro ao gerar PDF: " + e.message); 
+            console.error(e);
+        }
+
+        btn.innerHTML = oldTxt; 
+        btn.disabled = false;
     }
 
     function shareWhatsapp() {
