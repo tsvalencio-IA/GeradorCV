@@ -117,11 +117,45 @@
 
     #cv-paper { width: 210mm; min-height: 297mm; background: white; padding: 0; overflow: hidden; position: relative; }
 
-    /* RESPONSIVE SCALING */
-    @media (max-width: 1600px) { .paper-container { transform: scale(0.85); margin-bottom: -15%; } }
-    @media (max-width: 1366px) { .paper-container { transform: scale(0.75); margin-bottom: -25%; } }
-    @media (max-width: 1024px) { .paper-container { transform: scale(0.60); margin-bottom: -40%; } .editor-panel { width: 320px; } .preview-panel { padding: 20px; } }
-    @media (max-width: 768px) { .app-container { flex-direction: column; overflow: auto; height: auto; } .editor-panel { width: 100%; height: auto; border-right: none; overflow: visible; } .preview-panel { display: none; } }
+    /* --- RESPONSIVE / MOBILE FIX --- */
+    /* Telas grandes (Desktop) */
+    @media (min-width: 901px) {
+        @media (max-width: 1600px) { .paper-container { transform: scale(0.85); margin-bottom: -15%; } }
+        @media (max-width: 1366px) { .paper-container { transform: scale(0.75); margin-bottom: -25%; } }
+        @media (max-width: 1024px) { .paper-container { transform: scale(0.60); margin-bottom: -40%; } .editor-panel { width: 320px; } }
+    }
+
+    /* CORREÇÃO PARA CELULAR (Mobile First) */
+    @media (max-width: 900px) {
+        body { overflow: auto; height: auto; }
+        .app-container { flex-direction: column; width: 100%; height: auto; }
+        
+        .editor-panel { 
+            width: 100%; 
+            height: auto; 
+            border-right: none; 
+            overflow: visible; 
+            padding-bottom: 10px;
+        }
+
+        .preview-panel { 
+            display: flex; 
+            height: auto; 
+            padding: 10px; 
+            background: #525659;
+            overflow: hidden;
+            min-height: 600px; /* Garante espaço para o papel */
+        }
+
+        .paper-container { 
+            transform: scale(0.44); /* Reduz para caber na tela */
+            transform-origin: top center; 
+            margin-top: 10px;
+            margin-bottom: -150px; 
+        }
+        
+        .btn-group { padding-bottom: 20px; }
+    }
 
     /* --- LAYOUTS --- */
     .layout-modern { display: grid; grid-template-columns: 32% 68%; height: 100%; min-height: 297mm; }
@@ -220,17 +254,17 @@
 </div>
 
 <script>
-    // --- SERVICE WORKER REGISTRATION (OFFLINE SUPPORT) ---
+    // --- SERVICE WORKER (OFFLINE) ---
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./service-worker.js')
-            .then(() => console.log('Service Worker Registrado!'))
-            .catch(err => console.log('Erro Service Worker:', err));
+            .then(() => console.log('Service Worker OK'))
+            .catch(err => console.log('Erro SW:', err));
         });
     }
 
     // --- LOGIC ---
-    const CONFIG = { initialCredits: 3, appVersion: "2.3.0 (Offline Mode)" };
+    const CONFIG = { initialCredits: 3, appVersion: "2.5.0 (Mobile Fix)" };
     let userCredits = parseInt(localStorage.getItem("cv_credits"));
     if (isNaN(userCredits)) { userCredits = CONFIG.initialCredits; localStorage.setItem("cv_credits", userCredits); }
     
@@ -311,13 +345,10 @@
         btn.innerHTML = "⏳ Gerando..."; btn.disabled = true;
         try {
             const el = document.getElementById('cv-paper');
-            // IMPORTANTE: scale 2 para alta definicao
             const canvas = await html2canvas(el, { scale: 2, useCORS: true });
             
-            // Integração correta com jsPDF UMD
             const { jsPDF } = window.jspdf; 
             const pdf = new jsPDF('p', 'mm', 'a4');
-            
             const pdfW = pdf.internal.pageSize.getWidth();
             const pdfH = pdf.internal.pageSize.getHeight();
             
