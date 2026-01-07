@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Gerador de Currículo PRO</title>
+<title>Gerador CV Pro</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2563eb">
@@ -11,161 +11,97 @@
 
 <script src="libs/jspdf.umd.min.js"></script>
 <script src="libs/html2canvas.min.js"></script>
-
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
 <style>
-    /* --- CSS SYSTEM --- */
-    :root { 
-        --primary: #2563eb; 
-        --secondary: #1e40af; 
-        --bg-app: #f0f2f5; 
-        --bg-panel: #ffffff; 
-        --text: #1f2937; 
-        --border: #e5e7eb; 
-    }
-
+    /* CSS RESET */
     * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
-    
-    body { 
-        margin: 0; 
-        padding: 0; 
-        background: var(--bg-app); 
-        font-family: 'Roboto', sans-serif; 
-        color: var(--text); 
-        height: 100vh; 
-        overflow: hidden; 
-        display: flex;
-        flex-direction: column;
-    }
+    body { margin: 0; padding: 0; background: #f0f2f5; font-family: 'Roboto', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-    /* --- LAYOUT RESPONSIVO (MOBILE FIRST) --- */
-    .app-container { 
-        display: flex; 
-        flex: 1;
+    /* LAYOUT PRINCIPAL */
+    .app-container { display: flex; width: 100%; height: 100%; }
+    
+    /* EDITOR (ESQUERDA) */
+    .editor-panel { 
         width: 100%; 
         height: 100%; 
-        overflow: hidden;
-    }
-
-    /* EDITOR (Esquerda/Topo) */
-    .editor-panel { 
-        width: 100%;
-        height: 100%;
-        background: var(--bg-panel); 
-        display: flex; 
-        flex-direction: column; 
+        background: #fff; 
+        display: flex; flex-direction: column; 
+        padding: 20px; 
         overflow-y: auto; 
-        padding: 20px;
         z-index: 10;
+        padding-bottom: 80px; /* Espaço extra para rolagem */
     }
 
-    /* PREVIEW (Direita/Oculto no Mobile) */
+    /* PREVIEW (DIREITA - OCULTO NO MOBILE) */
     .preview-panel { 
-        display: none; /* Escondido no celular para economizar memória visual */
+        display: none; 
         flex: 1; 
         background: #525659; 
-        justify-content: center; 
-        align-items: flex-start; 
         padding: 40px; 
-        overflow-y: auto; 
+        justify-content: center; 
+        overflow-y: auto;
     }
-
-    /* QUANDO EM DESKTOP/TABLET */
+    
     @media (min-width: 900px) {
-        .editor-panel { width: 400px; border-right: 1px solid var(--border); }
+        .editor-panel { width: 400px; border-right: 1px solid #ddd; }
         .preview-panel { display: flex; }
     }
 
-    /* --- ELEMENTOS DE UI --- */
-    .header-branding { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--primary); }
-    .header-branding h1 { margin: 0; font-size: 20px; color: var(--primary); font-weight: 700; }
-    .header-branding span { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
-
-    .credit-badge { 
-        background: #eff6ff; 
-        border: 1px solid #bfdbfe; 
-        color: #1e40af; 
-        padding: 12px; 
-        border-radius: 8px; 
-        margin-bottom: 20px; 
-        text-align: center; 
-        font-weight: 700; 
-        font-size: 14px; 
-        cursor: pointer; 
+    /* ELEMENTOS VISUAIS */
+    .header { border-bottom: 2px solid #2563eb; padding-bottom: 15px; margin-bottom: 20px; }
+    .header h1 { margin: 0; color: #2563eb; font-size: 20px; font-weight: 700; }
+    
+    .credit-box { 
+        background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; 
+        padding: 15px; border-radius: 8px; margin-bottom: 20px; 
+        text-align: center; font-weight: bold; cursor: pointer; 
     }
 
     .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px; color: #555; text-transform: uppercase; }
+    .form-group label { display: block; font-size: 12px; font-weight: bold; color: #555; text-transform: uppercase; margin-bottom: 5px; }
     
     input, select, textarea { 
-        width: 100%; 
-        padding: 12px; 
-        background: #f9fafb; 
-        border: 1px solid var(--border); 
-        border-radius: 6px; 
-        font-size: 14px; 
-        color: #000;
+        width: 100%; padding: 12px; background: #f9fafb; 
+        border: 1px solid #e5e7eb; border-radius: 6px; 
+        font-size: 14px; color: #000; 
     }
-    input:focus, select:focus, textarea:focus { border-color: var(--primary); background: #fff; }
     textarea { resize: vertical; min-height: 80px; }
 
-    .btn-group { display: flex; gap: 10px; margin-top: 20px; flex-direction: column; padding-bottom: 40px; }
-    
+    /* BOTÕES */
+    .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
     button { 
-        width: 100%; 
-        padding: 16px; 
-        border: none; 
-        border-radius: 8px; 
-        font-weight: 700; 
-        font-size: 15px; 
-        cursor: pointer; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        gap: 8px; 
-        text-transform: uppercase; 
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        width: 100%; padding: 16px; border: none; border-radius: 8px; 
+        font-weight: bold; font-size: 15px; color: white; cursor: pointer; 
+        text-transform: uppercase; display: flex; align-items: center; justify-content: center; 
     }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-whatsapp { background: #25D366; color: white; }
+    .btn-whats { background: #25D366; }
+    .btn-save { background: #2563eb; }
 
-    .footer-signature { text-align: center; margin-top: auto; padding: 20px; font-size: 10px; color: #aaa; font-family: monospace; }
-
-    /* --- PAPEL DO CURRÍCULO (ESTILO A4 FIXO) --- */
+    /* FOLHA A4 */
     #cv-paper { 
-        width: 210mm; 
-        min-height: 297mm; 
-        background: white; 
-        position: relative; 
-        box-shadow: 0 0 10px rgba(0,0,0,0.3);
-        /* Importante: letter-spacing normal para evitar bugs no Android */
+        width: 210mm; min-height: 297mm; background: white; 
+        /* IMPORTANTE: Corrige espaçamento de fonte no Android */
         letter-spacing: normal; 
     }
 
     /* --- LAYOUTS --- */
-    /* Modern */
-    .layout-modern { display: grid; grid-template-columns: 30% 70%; height: 100%; }
-    .layout-modern .sidebar { background: #333; color: white; padding: 20px; }
+    .layout-modern { display: grid; grid-template-columns: 32% 68%; height: 100%; }
+    .layout-modern .sidebar { background: #2d3748; color: white; padding: 25px; }
     .layout-modern .main { padding: 30px; color: #333; }
     .layout-modern h2 { margin: 0; font-size: 28px; text-transform: uppercase; }
-    .layout-modern h3 { font-size: 16px; border-bottom: 2px solid #ddd; margin: 20px 0 10px 0; text-transform: uppercase; }
-    .layout-modern .sidebar h3 { border-color: #555; color: #ccc; }
+    .layout-modern p { font-size: 13px; line-height: 1.5; white-space: pre-line; margin-bottom: 10px; }
     
-    /* Classic */
     .layout-classic { padding: 40px; color: #000; }
-    .layout-classic .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 20px; }
-    .layout-classic h2 { margin: 0; font-size: 32px; text-transform: uppercase; }
-    .layout-classic h3 { background: #eee; padding: 5px; margin-top: 20px; text-transform: uppercase; border-left: 5px solid #000; }
+    .layout-classic .head { text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; }
+    .layout-classic h2 { margin: 0; font-size: 30px; text-transform: uppercase; }
+    .layout-classic p { font-size: 13px; line-height: 1.5; white-space: pre-line; }
 
-    /* Executive */
     .layout-executive { padding: 40px; }
-    .layout-executive .header { border-left: 5px solid #1e40af; padding-left: 20px; margin-bottom: 30px; }
-    .layout-executive h2 { margin: 0; font-size: 34px; color: #1e40af; }
-    .layout-executive h3 { color: #1e40af; border-bottom: 1px solid #ccc; margin-top: 25px; }
+    .layout-executive .head { border-left: 5px solid #1e40af; padding-left: 20px; margin-bottom: 20px; }
+    .layout-executive h2 { margin: 0; font-size: 32px; color: #1e40af; }
+    .layout-executive p { font-size: 13px; line-height: 1.5; white-space: pre-line; }
 
-    /* Utilitários de Texto no CV */
-    .cv-text { font-size: 13px; line-height: 1.5; white-space: pre-line; }
     .cv-img { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; margin: 0 auto 15px auto; display: block; border: 3px solid #fff; }
 </style>
 </head>
@@ -173,310 +109,200 @@
 
 <div class="app-container">
     <div class="editor-panel">
-        <div class="header-branding">
-            <h1>CV BUILDER PRO</h1>
-            <span>Sistema Profissional</span>
-        </div>
-
-        <div class="credit-badge" id="creditDisplay" onclick="adminUnlock()">
-            Verificando licença...
-        </div>
-
-        <div class="form-group">
-            <label>Modelo do Documento</label>
-            <select id="layoutSelector" onchange="updatePreview()">
-                <option value="modern">Moderno (Com Foto)</option>
-                <option value="classic">Clássico (Tradicional)</option>
-                <option value="executive">Executivo (Corporativo)</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label>Preenchimento Inteligente</label>
-            <select id="jobSelector" onchange="autoFillJob()">
-                <option value="">Selecione para preencher...</option>
-                <option value="mecanico">Mecânico</option>
-                <option value="vendedor">Vendedor</option>
-                <option value="admin">Administrativo</option>
-                <option value="ti">Técnico TI</option>
-                <option value="saude">Saúde/Enfermagem</option>
-            </select>
-        </div>
-
-        <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
-
-        <div class="form-group"><label>Foto</label><input type="file" id="foto" accept="image/*"></div>
-        <div class="form-group"><label>Nome Completo</label><input id="nome" placeholder="Seu Nome" oninput="updatePreview()"></div>
-        <div class="form-group"><label>Telefone</label><input id="telefone" placeholder="(00) 00000-0000" oninput="updatePreview()"></div>
-        <div class="form-group"><label>Email</label><input id="email" placeholder="email@exemplo.com" oninput="updatePreview()"></div>
-        <div class="form-group"><label>Cidade/Estado</label><input id="local" placeholder="Cidade - UF" oninput="updatePreview()"></div>
-        <div class="form-group"><label>Cargo Pretendido</label><input id="cargo" placeholder="Ex: Motorista" oninput="updatePreview()"></div>
+        <div class="header"><h1>CV BUILDER PRO</h1></div>
         
-        <div class="form-group"><label>Resumo Profissional</label><textarea id="resumo" oninput="updatePreview()"></textarea></div>
-        <div class="form-group"><label>Experiência Profissional</label><textarea id="exp" rows="5" oninput="updatePreview()"></textarea></div>
-        <div class="form-group"><label>Formação Acadêmica</label><textarea id="formacao" oninput="updatePreview()"></textarea></div>
-        <div class="form-group"><label>Habilidades</label><textarea id="skills" oninput="updatePreview()"></textarea></div>
+        <div class="credit-box" id="creditDisplay" onclick="unlockAdmin()">Verificando...</div>
+
+        <div class="form-group"><label>Layout</label><select id="layout" onchange="render()"><option value="modern">Moderno</option><option value="classic">Clássico</option><option value="executive">Executivo</option></select></div>
+        <div class="form-group"><label>Auto-Preencher</label><select id="job" onchange="autoFill()"><option value="">Selecione...</option><option value="mecanico">Mecânico</option><option value="vendedor">Vendedor</option><option value="admin">Administrativo</option><option value="ti">Técnico TI</option><option value="saude">Saúde</option></select></div>
+        
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+        
+        <div class="form-group"><label>Foto</label><input type="file" id="foto" accept="image/*"></div>
+        <div class="form-group"><label>Nome</label><input id="nome" placeholder="Nome Completo" oninput="render()"></div>
+        <div class="form-group"><label>Telefone</label><input id="tel" placeholder="(00) 00000-0000" oninput="render()"></div>
+        <div class="form-group"><label>Email</label><input id="email" placeholder="email@exemplo.com" oninput="render()"></div>
+        <div class="form-group"><label>Cidade</label><input id="city" placeholder="Cidade - UF" oninput="render()"></div>
+        <div class="form-group"><label>Cargo</label><input id="cargo" placeholder="Ex: Motorista" oninput="render()"></div>
+        <div class="form-group"><label>Resumo</label><textarea id="resumo" oninput="render()"></textarea></div>
+        <div class="form-group"><label>Experiência</label><textarea id="exp" rows="5" oninput="render()"></textarea></div>
+        <div class="form-group"><label>Formação</label><textarea id="edu" oninput="render()"></textarea></div>
+        <div class="form-group"><label>Habilidades</label><textarea id="skills" oninput="render()"></textarea></div>
 
         <div class="btn-group">
-            <button class="btn-whatsapp" onclick="generateAndShare('whatsapp')">📱 Enviar no WhatsApp (PDF)</button>
-            <button class="btn-primary" onclick="generateAndShare('download')">💾 Baixar Arquivo</button>
+            <button class="btn-whatsapp" onclick="processAction()">📱 Gerar PDF e Enviar</button>
         </div>
-
-        <div class="footer-signature">Desenvolvido com 🤖 por thIAguinho Soluções</div>
+        <p style="text-align:center; font-size:11px; color:#666;">ℹ️ Escolha "WhatsApp" ou "Salvar" no menu.</p>
     </div>
 
     <div class="preview-panel">
-        <div class="paper-container">
-            <div id="cv-paper" class="layout-modern"></div>
-        </div>
+        <div id="cv-paper" class="layout-modern"></div>
     </div>
 </div>
 
 <script>
-    // 1. SERVICE WORKER (OFFLINE)
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker.js');
-    }
+    // 1. SERVICE WORKER
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./service-worker.js'); }
 
-    // 2. SISTEMA DE CRÉDITOS OFUSCADO
-    const STORAGE_KEY = "_sys_cfg_v2"; 
-    const INITIAL_CREDITS = 3;
-    let credits = parseInt(localStorage.getItem(STORAGE_KEY));
-    
-    if (isNaN(credits)) { 
-        credits = INITIAL_CREDITS; 
-        localStorage.setItem(STORAGE_KEY, credits); 
-    }
+    // 2. CRÉDITOS
+    const KEY_CREDITS = "_sys_credits_v5_final";
+    let credits = parseInt(localStorage.getItem(KEY_CREDITS));
+    if (isNaN(credits)) { credits = 3; localStorage.setItem(KEY_CREDITS, 3); }
 
-    function updateCreditsUI() {
+    function updateUI() {
         const el = document.getElementById("creditDisplay");
-        if (credits > 0) {
-            el.innerHTML = `CRÉDITOS DISPONÍVEIS: ${credits}`;
-            el.style.backgroundColor = "#eff6ff";
-            el.style.color = "#1e40af";
-        } else {
-            el.innerHTML = `LIMITE ATINGIDO<br><small>(Toque para liberar)</small>`;
-            el.style.backgroundColor = "#fef2f2";
-            el.style.color = "#991b1b";
-        }
+        if (credits > 0) { el.innerText = `CRÉDITOS: ${credits}`; el.style.background = "#eff6ff"; el.style.color = "#1e40af"; }
+        else { el.innerText = "LIMITE ATINGIDO (Toque p/ Liberar)"; el.style.background = "#fee2e2"; el.style.color = "#991b1b"; }
     }
-    updateCreditsUI();
+    updateUI();
 
-    // 3. BACKDOOR (Desbloqueio com senha)
     let taps = 0;
-    function adminUnlock() {
+    function unlockAdmin() {
         taps++;
         if (taps === 5) {
-            const pass = prompt("🔐 ÁREA ADMINISTRATIVA\nDigite o código de recarga:");
-            if (pass === "admin123") {
-                localStorage.setItem(STORAGE_KEY, 50);
-                alert("✅ 50 CRÉDITOS ADICIONADOS!");
-                location.reload();
-            } else if (pass !== null) {
-                alert("❌ Código incorreto.");
+            if (prompt("Código Admin:") === "admin123") {
+                credits = 50; localStorage.setItem(KEY_CREDITS, 50); updateUI(); alert("Liberado!");
             }
             taps = 0;
         }
         setTimeout(() => taps = 0, 2000);
     }
 
-    // 4. DADOS DE PREENCHIMENTO
+    // 3. DADOS
     const JOBS = {
-        "mecanico": { resumo: "Profissional com experiência em mecânica geral, diagnóstico e manutenção.", skills: "• Motor e Câmbio\n• Suspensão\n• Freios ABS", exp: "Oficina Central (2020-Atual)\nMecânico Líder." },
-        "vendedor": { resumo: "Vendedor com foco em metas e satisfação do cliente.", skills: "• Atendimento\n• Negociação\n• CRM", exp: "Loja Varejo (2021-Atual)\nVendedor Sênior." },
-        "admin": { resumo: "Experiência em rotinas administrativas e financeiras.", skills: "• Excel Avançado\n• Notas Fiscais\n• Atendimento", exp: "Escritório Contábil (2019-Atual)\nAuxiliar Adm." },
-        "ti": { resumo: "Técnico de suporte focado em hardware e redes.", skills: "• Manutenção de PCs\n• Redes TCP/IP\n• Windows/Linux", exp: "Tech Info (2022-Atual)\nSuporte N1." },
-        "saude": { resumo: "Profissional de saúde com atendimento humanizado.", skills: "• Primeiros Socorros\n• Triagem\n• Cuidados Gerais", exp: "Hospital Sta Casa (2020-Atual)\nTécnico de Enfermagem." }
+        "mecanico": { r: "Experiência em mecânica geral.", s: "• Motor\n• Freios\n• Suspensão", e: "Oficina X (2020-Atual)\nMecânico." },
+        "vendedor": { r: "Vendedor focado em metas.", s: "• Vendas\n• Negociação\n• CRM", e: "Loja Y (2021-Atual)\nVendedor." },
+        "admin": { r: "Rotinas administrativas.", s: "• Excel\n• NFe\n• Arquivo", e: "Empresa Z (2019-Atual)\nAuxiliar." },
+        "ti": { r: "Suporte técnico.", s: "• Windows\n• Hardware\n• Redes", e: "Tech Info (2022-Atual)\nSuporte." },
+        "saude": { r: "Atendimento em saúde.", s: "• Triagem\n• Sinais Vitais", e: "Hospital W (2020-Atual)\nTécnico." }
     };
-
-    let userPhoto = "";
-    document.getElementById("foto").addEventListener("change", function(e) {
+    
+    let photo = "";
+    document.getElementById("foto").addEventListener("change", e => {
         if (e.target.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                userPhoto = evt.target.result;
-                updatePreview();
-            };
-            reader.readAsDataURL(e.target.files[0]);
+            const r = new FileReader();
+            r.onload = ev => { photo = ev.target.result; render(); };
+            r.readAsDataURL(e.target.files[0]);
         }
     });
 
-    function autoFillJob() {
-        const job = document.getElementById("jobSelector").value;
-        if (JOBS[job]) {
-            document.getElementById("resumo").value = JOBS[job].resumo;
-            document.getElementById("skills").value = JOBS[job].skills;
-            document.getElementById("exp").value = JOBS[job].exp;
-            updatePreview();
+    function autoFill() {
+        const j = document.getElementById("job").value;
+        if (JOBS[j]) {
+            document.getElementById("resumo").value = JOBS[j].r;
+            document.getElementById("skills").value = JOBS[j].s;
+            document.getElementById("exp").value = JOBS[j].e;
+            render();
         }
     }
 
-    // 5. RENDERIZAÇÃO DO HTML
-    function updatePreview() {
+    // 4. RENDER
+    function render() {
         const d = {
-            nome: document.getElementById("nome").value || "Nome Completo",
-            telefone: document.getElementById("telefone").value || "(00) 00000-0000",
+            nome: document.getElementById("nome").value || "Nome",
+            tel: document.getElementById("tel").value || "(00) 00000-0000",
             email: document.getElementById("email").value || "email@exemplo.com",
-            local: document.getElementById("local").value || "Cidade - UF",
+            city: document.getElementById("city").value || "Cidade - UF",
             cargo: document.getElementById("cargo").value || "Cargo",
             resumo: document.getElementById("resumo").value,
             exp: document.getElementById("exp").value,
-            formacao: document.getElementById("formacao").value,
+            edu: document.getElementById("edu").value,
             skills: document.getElementById("skills").value,
-            layout: document.getElementById("layoutSelector").value
+            layout: document.getElementById("layout").value
         };
 
-        const paper = document.getElementById("cv-paper");
-        paper.className = `layout-${d.layout}`;
+        const p = document.getElementById("cv-paper");
+        p.className = `layout-${d.layout}`;
+        const t = txt => txt ? txt.replace(/\n/g, "<br>") : "";
         
-        const safeText = (t) => t ? t.replace(/\n/g, "<br>") : "";
-        let html = "";
-
-        // Lógica simples de templates
+        let h = "";
         if (d.layout === 'modern') {
-            html = `
-                <div class="sidebar">
-                    ${userPhoto ? `<img src="${userPhoto}" class="cv-img">` : ''}
-                    <h3>Contato</h3>
-                    <p class="cv-text">${d.telefone}<br>${d.email}<br>${d.local}</p>
-                    <h3>Competências</h3>
-                    <p class="cv-text">${safeText(d.skills)}</p>
-                </div>
-                <div class="main">
-                    <h2>${d.nome}</h2>
-                    <div style="color:#2563eb; font-weight:bold; margin-bottom:20px;">${d.cargo}</div>
-                    <h3>Resumo</h3><p class="cv-text">${safeText(d.resumo)}</p>
-                    <h3>Experiência</h3><p class="cv-text">${safeText(d.exp)}</p>
-                    <h3>Formação</h3><p class="cv-text">${safeText(d.formacao)}</p>
-                </div>`;
+            h = `<div class="sidebar">${photo?`<img src="${photo}" class="cv-img">`:''}<h3>Contato</h3><p>${d.tel}<br>${d.email}<br>${d.city}</p><h3>Habilidades</h3><p>${t(d.skills)}</p></div><div class="main"><h2>${d.nome}</h2><div style="color:#2563eb;font-weight:bold;margin-bottom:20px">${d.cargo}</div><h3>Resumo</h3><p>${t(d.resumo)}</p><h3>Experiência</h3><p>${t(d.exp)}</p><h3>Formação</h3><p>${t(d.edu)}</p></div>`;
         } else if (d.layout === 'classic') {
-            html = `
-                <div class="header">
-                    <h2>${d.nome}</h2>
-                    <p>${d.telefone} | ${d.email} | ${d.local}</p>
-                    <strong>${d.cargo}</strong>
-                </div>
-                ${d.resumo ? `<h3>Resumo</h3><p class="cv-text">${safeText(d.resumo)}</p>` : ''}
-                ${d.exp ? `<h3>Experiência</h3><p class="cv-text">${safeText(d.exp)}</p>` : ''}
-                ${d.formacao ? `<h3>Formação</h3><p class="cv-text">${safeText(d.formacao)}</p>` : ''}
-                ${d.skills ? `<h3>Habilidades</h3><p class="cv-text">${safeText(d.skills)}</p>` : ''}`;
+            h = `<div class="head"><h2>${d.nome}</h2><p>${d.tel} | ${d.email} | ${d.city}</p><strong>${d.cargo}</strong></div>${d.resumo?`<h3>Resumo</h3><p>${t(d.resumo)}</p>`:''}${d.exp?`<h3>Experiência</h3><p>${t(d.exp)}</p>`:''}${d.edu?`<h3>Formação</h3><p>${t(d.edu)}</p>`:''}${d.skills?`<h3>Habilidades</h3><p>${t(d.skills)}</p>`:''}`;
         } else {
-            html = `
-                <div class="header">
-                    <div style="display:flex; justify-content:space-between;">
-                        <div><h2>${d.nome}</h2><p style="color:#1e40af">${d.cargo}</p></div>
-                        ${userPhoto ? `<img src="${userPhoto}" style="width:80px;height:80px;border-radius:5px;object-fit:cover;">` : ''}
-                    </div>
-                    <p style="font-size:12px; margin-top:5px;">${d.telefone} • ${d.email} • ${d.local}</p>
-                </div>
-                <h3>Perfil</h3><p class="cv-text">${safeText(d.resumo)}</p>
-                <h3>Trajetória</h3><p class="cv-text">${safeText(d.exp)}</p>
-                <h3>Educação</h3><p class="cv-text">${safeText(d.formacao)}</p>
-                <h3>Skills</h3><p class="cv-text">${safeText(d.skills)}</p>`;
+            h = `<div class="head"><h2>${d.nome}</h2><p style="color:#1e40af">${d.cargo}</p><small>${d.tel} • ${d.email} • ${d.city}</small></div><h3>Perfil</h3><p>${t(d.resumo)}</p><h3>Trajetória</h3><p>${t(d.exp)}</p><h3>Educação</h3><p>${t(d.edu)}</p><h3>Competências</h3><p>${t(d.skills)}</p>`;
         }
-        paper.innerHTML = html;
+        p.innerHTML = h;
     }
-    updatePreview();
+    render();
 
-    // 6. GERAÇÃO DE PDF BLINDADA (CLONAGEM + SHARE API)
-    async function generateAndShare(mode) {
-        if (credits <= 0) { 
-            alert("⚠️ SEU PLANO ACABOU.\nToque 5 vezes no aviso 'LIMITE ATINGIDO' para recarregar."); 
-            return; 
-        }
+    // 5. GERAÇÃO CORRIGIDA (ESSENCIAL PARA NÃO SAIR ESMAGADO)
+    async function processAction() {
+        if (credits <= 0) { alert("⚠️ LIMITE ATINGIDO! Toque 5 vezes no aviso de créditos."); return; }
 
-        const btns = document.querySelectorAll("button");
-        btns.forEach(b => { b.innerHTML = "⏳ Gerando..."; b.disabled = true; });
+        const btn = document.querySelector("button");
+        const old = btn.innerText;
+        btn.innerText = "⏳ Gerando PDF..."; btn.disabled = true;
 
         try {
-            // --- PASSO A: CLONAGEM PARA RESOLVER TEXTO SOBRESCRITO ---
-            // Criamos uma cópia do currículo fora da tela, com tamanho A4 fixo (210mm)
-            // Isso força o html2canvas a ignorar que estamos num celular pequeno.
+            // A. TÉCNICA DE CLONAGEM (Força renderização desktop no celular)
             const original = document.getElementById("cv-paper");
             const clone = original.cloneNode(true);
             
-            // Estilos forçados para o clone (Reset de CSS)
-            clone.style.position = "fixed";
-            clone.style.top = "-10000px";
-            clone.style.left = "0";
-            clone.style.width = "210mm";
-            clone.style.minHeight = "297mm";
-            clone.style.transform = "none";
-            clone.style.margin = "0";
-            clone.style.zIndex = "-1";
-            
+            // Configuração A4 fixa (Ignora tamanho da tela do celular)
+            Object.assign(clone.style, {
+                position: "fixed", top: "-9999px", left: "0",
+                width: "210mm", minHeight: "297mm",
+                transform: "none", margin: "0", zIndex: "-1",
+                letterSpacing: "normal" 
+            });
             document.body.appendChild(clone);
 
-            // --- PASSO B: RENDERIZAÇÃO ---
-            const canvas = await html2canvas(clone, {
-                scale: 2, // Alta qualidade
-                useCORS: true,
-                logging: false,
-                windowWidth: 1200 // Simula desktop para fontes não quebrarem
+            // B. GERA A IMAGEM (Com largura de desktop forçada)
+            const canvas = await html2canvas(clone, { 
+                scale: 2, 
+                useCORS: true, 
+                logging: false, 
+                windowWidth: 1200 // O SEGREDO: Simula tela de PC
             });
-            
-            document.body.removeChild(clone); // Limpa a memória
+            document.body.removeChild(clone);
 
-            // --- PASSO C: CRIAÇÃO DO PDF ---
+            // C. CRIA O PDF
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'mm', 'a4');
-            const pdfW = pdf.internal.pageSize.getWidth();
-            const pdfH = pdf.internal.pageSize.getHeight();
+            pdf.addImage(canvas.toDataURL("image/png"), 'PNG', 0, 0, 210, 297);
             
-            pdf.addImage(canvas.toDataURL("image/png"), 'PNG', 0, 0, pdfW, pdfH);
-            
-            const cleanName = document.getElementById("nome").value.replace(/[^a-z0-9]/gi, '_') || "Curriculo";
-            const fileName = `Curriculo_${cleanName}.pdf`;
+            const name = document.getElementById("nome").value.replace(/[^a-z0-9]/gi, '_') || "CV";
+            const fileName = `Curriculo_${name}.pdf`;
 
-            // --- PASSO D: ESTRATÉGIA DE SALVAMENTO (SHARE FIRST) ---
+            // D. SALVAMENTO COMPATÍVEL COM APK
             let success = false;
-
-            // Tentativa 1: Web Share API (Nativo do Android - WhatsApp/Drive)
-            if (navigator.share && navigator.canShare) {
+            
+            // Tenta Compartilhar Nativo (WhatsApp/Drive)
+            if (navigator.share) {
                 try {
-                    const blob = pdf.output('blob');
-                    const file = new File([blob], fileName, { type: "application/pdf" });
-                    
+                    const file = new File([pdf.output('blob')], fileName, { type: "application/pdf" });
                     if (navigator.canShare({ files: [file] })) {
                         await navigator.share({
                             files: [file],
-                            title: 'Currículo Profissional',
-                            text: 'Segue meu currículo em PDF.'
+                            title: 'Meu Currículo',
+                            text: 'Segue em anexo.'
                         });
                         success = true;
                     }
-                } catch (e) {
-                    console.log("Share cancelado ou falhou: " + e);
-                }
+                } catch (e) { console.log("Share falhou"); }
             }
 
-            // Tentativa 2: Fallback direto (Se o Share falhar, tenta salvar)
+            // Fallback (Se o share falhar, baixa o arquivo)
             if (!success) {
-                try {
-                    pdf.save(fileName);
-                    alert("✅ PDF Gerado!\n\nVerifique a pasta 'Downloads' ou 'Meus Arquivos' no seu celular.\n\nSe não encontrar, verifique as permissões do aplicativo.");
-                    success = true;
-                } catch (e) {
-                    alert("❌ Erro de Permissão:\nO App não conseguiu salvar o arquivo.\n\nPor favor, habilite 'Permissão de Armazenamento' nas configurações do seu Android.");
-                }
+                pdf.save(fileName);
+                alert("✅ Arquivo gerado!\nSe o menu não abriu, verifique a pasta DOWNLOADS do seu celular.");
+                success = true;
             }
 
             if (success) {
                 credits--;
-                localStorage.setItem(STORAGE_KEY, credits);
-                updateCreditsUI();
+                localStorage.setItem(KEY_CREDITS, credits);
+                updateUI();
             }
 
         } catch (e) {
-            alert("Erro crítico: " + e.message);
+            alert("Erro: " + e.message);
         }
 
-        // Restaura botões
-        btns.forEach(b => b.disabled = false);
-        document.querySelector(".btn-whatsapp").innerHTML = "📱 Enviar no WhatsApp (PDF)";
-        document.querySelector(".btn-primary").innerHTML = "💾 Baixar Arquivo";
+        btn.innerText = old; btn.disabled = false;
     }
 </script>
-
 </body>
 </html>
