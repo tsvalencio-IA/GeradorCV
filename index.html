@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Gerador CV Pro</title>
+<title>Gerador de Currículo PRO</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2563eb">
@@ -14,48 +14,125 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
 <style>
-    /* CSS RESET */
-    * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
-    body { margin: 0; padding: 0; background: #f0f2f5; font-family: 'Roboto', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    /* --- CSS GERAL --- */
+    :root { 
+        --primary: #2563eb; 
+        --secondary: #1e40af; 
+        --bg-app: #f0f2f5; 
+        --bg-panel: #ffffff; 
+        --text: #1f2937; 
+        --border: #e5e7eb; 
+    }
 
-    /* LAYOUT PRINCIPAL */
-    .app-container { display: flex; width: 100%; height: 100%; }
+    * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
     
-    /* EDITOR (ESQUERDA) */
-    .editor-panel { 
+    body { 
+        margin: 0; 
+        padding: 0; 
+        background: var(--bg-app); 
+        font-family: 'Roboto', sans-serif; 
+        color: var(--text); 
+        height: 100vh; 
+        overflow: hidden; 
+        display: flex;
+        flex-direction: column;
+    }
+
+    .app-container { 
+        display: flex; 
         width: 100%; 
         height: 100%; 
-        background: #fff; 
-        display: flex; flex-direction: column; 
+    }
+
+    /* --- EDITOR (ONDE DIGITA) --- */
+    .editor-panel { 
+        width: 450px; 
+        min-width: 350px;
+        background: var(--bg-panel); 
+        display: flex; 
+        flex-direction: column; 
         padding: 20px; 
         overflow-y: auto; 
         z-index: 10;
-        padding-bottom: 80px; /* Espaço extra para rolagem */
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        border-right: 1px solid var(--border);
     }
 
-    /* PREVIEW (DIREITA - OCULTO NO MOBILE) */
+    /* --- PREVIEW (ONDE VÊ O CURRÍCULO) --- */
     .preview-panel { 
-        display: none; 
         flex: 1; 
         background: #525659; 
         padding: 40px; 
+        overflow-y: auto; 
+        display: flex; 
         justify-content: center; 
-        overflow-y: auto;
-    }
-    
-    @media (min-width: 900px) {
-        .editor-panel { width: 400px; border-right: 1px solid #ddd; }
-        .preview-panel { display: flex; }
+        align-items: flex-start; 
     }
 
-    /* ELEMENTOS VISUAIS */
-    .header { border-bottom: 2px solid #2563eb; padding-bottom: 15px; margin-bottom: 20px; }
-    .header h1 { margin: 0; color: #2563eb; font-size: 20px; font-weight: 700; }
-    
-    .credit-box { 
+    /* O PAPEL A4 */
+    .paper-container {
+        transform-origin: top center;
+        transition: transform 0.3s;
+    }
+
+    #cv-paper { 
+        width: 210mm; 
+        min-height: 297mm; 
+        background: white; 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        position: relative;
+        /* Garante que o texto não quebre no Android */
+        letter-spacing: normal; 
+    }
+
+    /* --- REGRAS PARA CELULAR (MOBILE) --- */
+    @media (max-width: 900px) {
+        body { 
+            overflow: auto; /* Permite rolar a página inteira */
+            height: auto; 
+            display: block;
+        }
+
+        .app-container { 
+            flex-direction: column; 
+            height: auto; 
+            display: block;
+        }
+        
+        .editor-panel { 
+            width: 100%; 
+            height: auto; 
+            border-right: none;
+            box-shadow: none;
+            padding-bottom: 20px;
+        }
+
+        .preview-panel { 
+            width: 100%; 
+            height: auto; 
+            display: flex; /* MANTIDO VISÍVEL COMO VOCÊ PEDIU */
+            background: #525659; 
+            padding: 20px 10px;
+            overflow: visible;
+        }
+
+        /* Ajuste de Zoom para caber na tela do celular */
+        .paper-container { 
+            transform: scale(0.44); 
+            margin-top: 0px;
+            margin-bottom: -150mm; /* Remove espaço extra gerado pelo scale */
+        }
+    }
+
+    /* --- ESTILOS VISUAIS DO APP --- */
+    .header-branding { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--primary); }
+    .header-branding h1 { margin: 0; font-size: 20px; color: var(--primary); font-weight: 700; }
+    .header-branding span { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+
+    .credit-badge { 
         background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; 
         padding: 15px; border-radius: 8px; margin-bottom: 20px; 
-        text-align: center; font-weight: bold; cursor: pointer; 
+        text-align: center; font-weight: 700; cursor: pointer; 
     }
 
     .form-group { margin-bottom: 15px; }
@@ -63,43 +140,52 @@
     
     input, select, textarea { 
         width: 100%; padding: 12px; background: #f9fafb; 
-        border: 1px solid #e5e7eb; border-radius: 6px; 
+        border: 1px solid var(--border); border-radius: 6px; 
         font-size: 14px; color: #000; 
     }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); background: #fff; }
     textarea { resize: vertical; min-height: 80px; }
 
-    /* BOTÕES */
     .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    
     button { 
         width: 100%; padding: 16px; border: none; border-radius: 8px; 
-        font-weight: bold; font-size: 15px; color: white; cursor: pointer; 
-        text-transform: uppercase; display: flex; align-items: center; justify-content: center; 
+        font-weight: 700; font-size: 15px; cursor: pointer; 
+        display: flex; align-items: center; justify-content: center; gap: 8px; 
+        text-transform: uppercase; color: white;
     }
-    .btn-whats { background: #25D366; }
-    .btn-save { background: #2563eb; }
+    .btn-whatsapp { background: #25D366; }
+    .btn-save { background: var(--primary); }
 
-    /* FOLHA A4 */
-    #cv-paper { 
-        width: 210mm; min-height: 297mm; background: white; 
-        /* IMPORTANTE: Corrige espaçamento de fonte no Android */
-        letter-spacing: normal; 
+    .footer-signature { 
+        margin-top: 30px; padding: 20px; text-align: center; 
+        font-size: 11px; color: #aaa; font-family: monospace; 
     }
 
-    /* --- LAYOUTS --- */
+    /* --- LAYOUTS DOS CURRÍCULOS --- */
+    
+    /* MODERNO */
     .layout-modern { display: grid; grid-template-columns: 32% 68%; height: 100%; }
     .layout-modern .sidebar { background: #2d3748; color: white; padding: 25px; }
     .layout-modern .main { padding: 30px; color: #333; }
-    .layout-modern h2 { margin: 0; font-size: 28px; text-transform: uppercase; }
+    .layout-modern h2 { margin: 0; font-size: 28px; text-transform: uppercase; line-height: 1; }
+    .layout-modern h3 { font-size: 16px; border-bottom: 2px solid #ddd; margin: 20px 0 10px 0; text-transform: uppercase; }
+    .layout-modern .sidebar h3 { border-color: #555; color: #ccc; }
     .layout-modern p { font-size: 13px; line-height: 1.5; white-space: pre-line; margin-bottom: 10px; }
-    
+    .layout-modern .contact-info { font-size: 12px; margin-bottom: 20px; }
+
+    /* CLÁSSICO */
     .layout-classic { padding: 40px; color: #000; }
-    .layout-classic .head { text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; }
+    .layout-classic .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 20px; }
     .layout-classic h2 { margin: 0; font-size: 30px; text-transform: uppercase; }
+    .layout-classic h3 { background: #eee; padding: 5px; margin-top: 20px; border-left: 5px solid #000; text-transform: uppercase; font-size: 16px; }
     .layout-classic p { font-size: 13px; line-height: 1.5; white-space: pre-line; }
 
+    /* EXECUTIVO */
     .layout-executive { padding: 40px; }
-    .layout-executive .head { border-left: 5px solid #1e40af; padding-left: 20px; margin-bottom: 20px; }
-    .layout-executive h2 { margin: 0; font-size: 32px; color: #1e40af; }
+    .layout-executive .header { border-left: 5px solid #1e40af; padding-left: 20px; margin-bottom: 30px; }
+    .layout-executive h2 { margin: 0; font-size: 34px; color: #1e40af; }
+    .layout-executive h3 { color: #1e40af; border-bottom: 1px solid #ccc; margin-top: 25px; text-transform: uppercase; font-size: 16px; }
     .layout-executive p { font-size: 13px; line-height: 1.5; white-space: pre-line; }
 
     .cv-img { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; margin: 0 auto 15px auto; display: block; border: 3px solid #fff; }
@@ -109,71 +195,81 @@
 
 <div class="app-container">
     <div class="editor-panel">
-        <div class="header"><h1>CV BUILDER PRO</h1></div>
+        <div class="header-branding"><h1>CV BUILDER PRO</h1><span>Enterprise Edition</span></div>
         
-        <div class="credit-box" id="creditDisplay" onclick="unlockAdmin()">Verificando...</div>
+        <div class="credit-badge" id="creditDisplay" onclick="unlockAdmin()">Carregando licença...</div>
 
-        <div class="form-group"><label>Layout</label><select id="layout" onchange="render()"><option value="modern">Moderno</option><option value="classic">Clássico</option><option value="executive">Executivo</option></select></div>
-        <div class="form-group"><label>Auto-Preencher</label><select id="job" onchange="autoFill()"><option value="">Selecione...</option><option value="mecanico">Mecânico</option><option value="vendedor">Vendedor</option><option value="admin">Administrativo</option><option value="ti">Técnico TI</option><option value="saude">Saúde</option></select></div>
+        <div class="form-group"><label>Escolha o Layout</label><select id="layout" onchange="render()"><option value="modern">Moderno</option><option value="classic">Clássico</option><option value="executive">Executivo</option></select></div>
+        <div class="form-group"><label>Preencher Automático</label><select id="job" onchange="autoFill()"><option value="">Selecione...</option><option value="mecanico">Mecânico</option><option value="vendedor">Vendedor</option><option value="admin">Administrativo</option><option value="ti">Técnico TI</option><option value="saude">Saúde</option></select></div>
         
         <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
         
-        <div class="form-group"><label>Foto</label><input type="file" id="foto" accept="image/*"></div>
-        <div class="form-group"><label>Nome</label><input id="nome" placeholder="Nome Completo" oninput="render()"></div>
+        <div class="form-group"><label>Foto do Perfil</label><input type="file" id="foto" accept="image/*"></div>
+        <div class="form-group"><label>Nome Completo</label><input id="nome" placeholder="Seu Nome" oninput="render()"></div>
         <div class="form-group"><label>Telefone</label><input id="tel" placeholder="(00) 00000-0000" oninput="render()"></div>
         <div class="form-group"><label>Email</label><input id="email" placeholder="email@exemplo.com" oninput="render()"></div>
         <div class="form-group"><label>Cidade</label><input id="city" placeholder="Cidade - UF" oninput="render()"></div>
-        <div class="form-group"><label>Cargo</label><input id="cargo" placeholder="Ex: Motorista" oninput="render()"></div>
+        <div class="form-group"><label>Cargo Pretendido</label><input id="cargo" placeholder="Ex: Motorista" oninput="render()"></div>
         <div class="form-group"><label>Resumo</label><textarea id="resumo" oninput="render()"></textarea></div>
         <div class="form-group"><label>Experiência</label><textarea id="exp" rows="5" oninput="render()"></textarea></div>
         <div class="form-group"><label>Formação</label><textarea id="edu" oninput="render()"></textarea></div>
         <div class="form-group"><label>Habilidades</label><textarea id="skills" oninput="render()"></textarea></div>
 
         <div class="btn-group">
-            <button class="btn-whatsapp" onclick="processAction()">📱 Gerar PDF e Enviar</button>
+            <button class="btn-whatsapp" onclick="processAction()">📱 Enviar / Baixar PDF</button>
         </div>
-        <p style="text-align:center; font-size:11px; color:#666;">ℹ️ Escolha "WhatsApp" ou "Salvar" no menu.</p>
+        <p style="text-align:center; font-size:11px; color:#666;">ℹ️ Escolha "WhatsApp" ou "Salvar" no menu que abrir.</p>
+
+        <div class="footer-signature">Desenvolvido com 🤖 por thIAguinho Soluções</div>
     </div>
 
     <div class="preview-panel">
-        <div id="cv-paper" class="layout-modern"></div>
+        <div class="paper-container">
+            <div id="cv-paper" class="layout-modern"></div>
+        </div>
     </div>
 </div>
 
 <script>
-    // 1. SERVICE WORKER
+    // 1. SERVICE WORKER (Mantém o app funcionando offline)
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./service-worker.js'); }
 
-    // 2. CRÉDITOS
-    const KEY_CREDITS = "_sys_credits_v5_final";
+    // 2. SISTEMA DE CRÉDITOS
+    const KEY_CREDITS = "_sys_credits_final_v1";
     let credits = parseInt(localStorage.getItem(KEY_CREDITS));
     if (isNaN(credits)) { credits = 3; localStorage.setItem(KEY_CREDITS, 3); }
 
     function updateUI() {
         const el = document.getElementById("creditDisplay");
-        if (credits > 0) { el.innerText = `CRÉDITOS: ${credits}`; el.style.background = "#eff6ff"; el.style.color = "#1e40af"; }
-        else { el.innerText = "LIMITE ATINGIDO (Toque p/ Liberar)"; el.style.background = "#fee2e2"; el.style.color = "#991b1b"; }
+        if (credits > 0) { 
+            el.innerText = `CRÉDITOS DISPONÍVEIS: ${credits}`; 
+            el.style.background = "#eff6ff"; el.style.color = "#1e40af"; 
+        } else { 
+            el.innerHTML = "LIMITE ATINGIDO<br><small>(Toque para liberar)</small>"; 
+            el.style.background = "#fee2e2"; el.style.color = "#991b1b"; 
+        }
     }
     updateUI();
 
+    // Função Secreta (5 toques)
     let taps = 0;
     function unlockAdmin() {
         taps++;
         if (taps === 5) {
-            if (prompt("Código Admin:") === "admin123") {
-                credits = 50; localStorage.setItem(KEY_CREDITS, 50); updateUI(); alert("Liberado!");
+            if (prompt("Digite o código de liberação:") === "admin123") {
+                credits = 50; localStorage.setItem(KEY_CREDITS, 50); updateUI(); alert("Licença Renovada com Sucesso!");
             }
             taps = 0;
         }
         setTimeout(() => taps = 0, 2000);
     }
 
-    // 3. DADOS
+    // 3. DADOS PRÉ-DEFINIDOS
     const JOBS = {
-        "mecanico": { r: "Experiência em mecânica geral.", s: "• Motor\n• Freios\n• Suspensão", e: "Oficina X (2020-Atual)\nMecânico." },
+        "mecanico": { r: "Experiência em mecânica geral e diagnóstico.", s: "• Motor\n• Freios\n• Suspensão", e: "Oficina X (2020-Atual)\nMecânico." },
         "vendedor": { r: "Vendedor focado em metas.", s: "• Vendas\n• Negociação\n• CRM", e: "Loja Y (2021-Atual)\nVendedor." },
         "admin": { r: "Rotinas administrativas.", s: "• Excel\n• NFe\n• Arquivo", e: "Empresa Z (2019-Atual)\nAuxiliar." },
-        "ti": { r: "Suporte técnico.", s: "• Windows\n• Hardware\n• Redes", e: "Tech Info (2022-Atual)\nSuporte." },
+        "ti": { r: "Suporte técnico e redes.", s: "• Windows\n• Hardware\n• Redes", e: "Tech Info (2022-Atual)\nSuporte." },
         "saude": { r: "Atendimento em saúde.", s: "• Triagem\n• Sinais Vitais", e: "Hospital W (2020-Atual)\nTécnico." }
     };
     
@@ -196,14 +292,14 @@
         }
     }
 
-    // 4. RENDER
+    // 4. RENDERIZAÇÃO NA TELA (ATUALIZAÇÃO EM TEMPO REAL)
     function render() {
         const d = {
-            nome: document.getElementById("nome").value || "Nome",
+            nome: document.getElementById("nome").value || "Nome Completo",
             tel: document.getElementById("tel").value || "(00) 00000-0000",
             email: document.getElementById("email").value || "email@exemplo.com",
             city: document.getElementById("city").value || "Cidade - UF",
-            cargo: document.getElementById("cargo").value || "Cargo",
+            cargo: document.getElementById("cargo").value || "Cargo Pretendido",
             resumo: document.getElementById("resumo").value,
             exp: document.getElementById("exp").value,
             edu: document.getElementById("edu").value,
@@ -217,30 +313,32 @@
         
         let h = "";
         if (d.layout === 'modern') {
-            h = `<div class="sidebar">${photo?`<img src="${photo}" class="cv-img">`:''}<h3>Contato</h3><p>${d.tel}<br>${d.email}<br>${d.city}</p><h3>Habilidades</h3><p>${t(d.skills)}</p></div><div class="main"><h2>${d.nome}</h2><div style="color:#2563eb;font-weight:bold;margin-bottom:20px">${d.cargo}</div><h3>Resumo</h3><p>${t(d.resumo)}</p><h3>Experiência</h3><p>${t(d.exp)}</p><h3>Formação</h3><p>${t(d.edu)}</p></div>`;
+            h = `<div class="sidebar">${photo?`<img src="${photo}" class="cv-img">`:''}<h3>Contato</h3><p class="contact-info">${d.tel}<br>${d.email}<br>${d.city}</p><h3>Habilidades</h3><p>${t(d.skills)}</p></div><div class="main"><h2>${d.nome}</h2><div style="color:#2563eb;font-weight:bold;margin-bottom:20px">${d.cargo}</div><h3>Resumo</h3><p>${t(d.resumo)}</p><h3>Experiência</h3><p>${t(d.exp)}</p><h3>Formação</h3><p>${t(d.edu)}</p></div>`;
         } else if (d.layout === 'classic') {
-            h = `<div class="head"><h2>${d.nome}</h2><p>${d.tel} | ${d.email} | ${d.city}</p><strong>${d.cargo}</strong></div>${d.resumo?`<h3>Resumo</h3><p>${t(d.resumo)}</p>`:''}${d.exp?`<h3>Experiência</h3><p>${t(d.exp)}</p>`:''}${d.edu?`<h3>Formação</h3><p>${t(d.edu)}</p>`:''}${d.skills?`<h3>Habilidades</h3><p>${t(d.skills)}</p>`:''}`;
+            h = `<div class="header"><h2>${d.nome}</h2><p>${d.tel} | ${d.email} | ${d.city}</p><strong>${d.cargo}</strong></div>${d.resumo?`<h3>Resumo</h3><p>${t(d.resumo)}</p>`:''}${d.exp?`<h3>Experiência</h3><p>${t(d.exp)}</p>`:''}${d.edu?`<h3>Formação</h3><p>${t(d.edu)}</p>`:''}${d.skills?`<h3>Habilidades</h3><p>${t(d.skills)}</p>`:''}`;
         } else {
-            h = `<div class="head"><h2>${d.nome}</h2><p style="color:#1e40af">${d.cargo}</p><small>${d.tel} • ${d.email} • ${d.city}</small></div><h3>Perfil</h3><p>${t(d.resumo)}</p><h3>Trajetória</h3><p>${t(d.exp)}</p><h3>Educação</h3><p>${t(d.edu)}</p><h3>Competências</h3><p>${t(d.skills)}</p>`;
+            h = `<div class="header"><h2>${d.nome}</h2><p style="color:#1e40af">${d.cargo}</p><small>${d.tel} • ${d.email} • ${d.city}</small></div><h3>Perfil</h3><p>${t(d.resumo)}</p><h3>Trajetória</h3><p>${t(d.exp)}</p><h3>Educação</h3><p>${t(d.edu)}</p><h3>Competências</h3><p>${t(d.skills)}</p>`;
         }
         p.innerHTML = h;
     }
     render();
 
-    // 5. GERAÇÃO CORRIGIDA (ESSENCIAL PARA NÃO SAIR ESMAGADO)
+    // 5. GERAÇÃO DO PDF (PROCESSAMENTO CORRIGIDO)
     async function processAction() {
-        if (credits <= 0) { alert("⚠️ LIMITE ATINGIDO! Toque 5 vezes no aviso de créditos."); return; }
+        if (credits <= 0) { alert("⚠️ LIMITE ATINGIDO! Contate o suporte ou toque 5 vezes no aviso de créditos."); return; }
 
         const btn = document.querySelector("button");
         const old = btn.innerText;
-        btn.innerText = "⏳ Gerando PDF..."; btn.disabled = true;
+        btn.innerText = "⏳ Gerando PDF em Alta Definição..."; btn.disabled = true;
 
         try {
-            // A. TÉCNICA DE CLONAGEM (Força renderização desktop no celular)
+            // A. CLONAGEM (GARANTE A QUALIDADE DO PDF)
+            // Criamos uma cópia do currículo fora da tela, com tamanho A4 fixo
+            // Isso evita que o PDF saia esmagado ou pequeno
             const original = document.getElementById("cv-paper");
             const clone = original.cloneNode(true);
             
-            // Configuração A4 fixa (Ignora tamanho da tela do celular)
+            // Configurações para forçar o tamanho correto no PDF
             Object.assign(clone.style, {
                 position: "fixed", top: "-9999px", left: "0",
                 width: "210mm", minHeight: "297mm",
@@ -249,27 +347,26 @@
             });
             document.body.appendChild(clone);
 
-            // B. GERA A IMAGEM (Com largura de desktop forçada)
+            // B. GERA A IMAGEM DO PDF
             const canvas = await html2canvas(clone, { 
-                scale: 2, 
+                scale: 2, // 2x para qualidade Retina
                 useCORS: true, 
                 logging: false, 
-                windowWidth: 1200 // O SEGREDO: Simula tela de PC
+                windowWidth: 1200 // Simula uma tela de computador para o layout não quebrar
             });
             document.body.removeChild(clone);
 
-            // C. CRIA O PDF
+            // C. CRIA O ARQUIVO PDF
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'mm', 'a4');
             pdf.addImage(canvas.toDataURL("image/png"), 'PNG', 0, 0, 210, 297);
             
-            const name = document.getElementById("nome").value.replace(/[^a-z0-9]/gi, '_') || "CV";
+            const name = document.getElementById("nome").value.replace(/[^a-z0-9]/gi, '_') || "Curriculo";
             const fileName = `Curriculo_${name}.pdf`;
 
-            // D. SALVAMENTO COMPATÍVEL COM APK
+            // D. TENTA COMPARTILHAR (ANDROID NATIVO)
             let success = false;
             
-            // Tenta Compartilhar Nativo (WhatsApp/Drive)
             if (navigator.share) {
                 try {
                     const file = new File([pdf.output('blob')], fileName, { type: "application/pdf" });
@@ -277,17 +374,17 @@
                         await navigator.share({
                             files: [file],
                             title: 'Meu Currículo',
-                            text: 'Segue em anexo.'
+                            text: 'Segue meu currículo em PDF.'
                         });
                         success = true;
                     }
-                } catch (e) { console.log("Share falhou"); }
+                } catch (e) { console.log("Compartilhamento cancelado ou não suportado"); }
             }
 
-            // Fallback (Se o share falhar, baixa o arquivo)
+            // E. SE FALHAR, FAZ O DOWNLOAD DIRETO
             if (!success) {
                 pdf.save(fileName);
-                alert("✅ Arquivo gerado!\nSe o menu não abriu, verifique a pasta DOWNLOADS do seu celular.");
+                alert("✅ Arquivo Salvo!\nVerifique a pasta Downloads do seu celular.");
                 success = true;
             }
 
@@ -298,7 +395,7 @@
             }
 
         } catch (e) {
-            alert("Erro: " + e.message);
+            alert("Erro ao gerar: " + e.message);
         }
 
         btn.innerText = old; btn.disabled = false;
