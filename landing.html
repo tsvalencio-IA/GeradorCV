@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baixar CV Builder PRO</title>
+<meta name="theme-color" content="#2563eb">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+    /* --- DESIGN MODERNO E LIMPO --- */
+    :root { --primary: #2563eb; --dark: #1e3a8a; --accent: #fbbf24; }
+    body { margin: 0; padding: 0; font-family: 'Roboto', sans-serif; background: #f0f2f5; color: #333; }
+    
+    /* HERO SECTION (CABEÇALHO) */
+    .hero {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+        color: white; padding: 60px 20px; text-align: center;
+        border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+    }
+    .logo { font-size: 14px; font-weight: bold; letter-spacing: 2px; opacity: 0.8; margin-bottom: 20px; text-transform: uppercase; }
+    h1 { font-size: 32px; font-weight: 900; margin: 0 0 15px 0; line-height: 1.1; }
+    p.sub { font-size: 18px; opacity: 0.9; margin-bottom: 30px; font-weight: 300; }
+    
+    /* BOTÃO DE DOWNLOAD PULSANTE */
+    .btn-download {
+        background: var(--accent); color: #000;
+        text-decoration: none; padding: 18px 30px; border-radius: 50px;
+        font-weight: 900; font-size: 18px; display: inline-block;
+        box-shadow: 0 10px 25px rgba(251, 191, 36, 0.4);
+        transition: transform 0.2s;
+        text-transform: uppercase;
+        animation: pulse 2s infinite;
+    }
+    .btn-download:active { transform: scale(0.95); }
+    
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
+        70% { box-shadow: 0 0 0 15px rgba(251, 191, 36, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+    }
+
+    /* VANTAGENS */
+    .features { padding: 40px 20px; display: flex; flex-direction: column; gap: 20px; max-width: 600px; margin: 0 auto; }
+    .feature-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 15px; }
+    .icon { font-size: 30px; }
+    .text h3 { margin: 0; font-size: 16px; font-weight: bold; }
+    .text p { margin: 5px 0 0 0; font-size: 13px; color: #666; }
+
+    /* TUTORIAL DE INSTALAÇÃO (IMPORTANTE PARA APK) */
+    .tutorial { background: #fff; padding: 30px 20px; margin-top: 20px; text-align: left; max-width: 600px; margin: 20px auto; border-radius: 10px; border: 1px solid #ddd; }
+    .tutorial h2 { font-size: 20px; color: var(--dark); margin-top: 0; }
+    .step { display: flex; gap: 10px; margin-bottom: 15px; }
+    .num { background: var(--primary); color: white; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px; }
+    .step p { margin: 0; font-size: 14px; line-height: 1.5; }
+
+    /* RODAPÉ */
+    footer { text-align: center; padding: 30px; font-size: 12px; color: #999; }
+</style>
+</head>
+<body>
+
+    <div class="hero">
+        <div class="logo">CV Builder PRO</div>
+        <h1>Consiga seu emprego mais rápido</h1>
+        <p class="sub">Crie currículos profissionais em PDF direto pelo celular. Simples, rápido e aprovado pelo RH.</p>
+        
+        <a href="cv-app.apk" class="btn-download">⬇️ BAIXAR APP GRÁTIS</a>
+        <p style="font-size: 11px; margin-top: 10px; opacity: 0.7;">Versão 2.0 • Android • 100% Seguro</p>
+    </div>
+
+    <div class="features">
+        <div class="feature-card">
+            <div class="icon">🚀</div>
+            <div class="text">
+                <h3>Pronto em 2 Minutos</h3>
+                <p>Preencha seus dados e o app formata tudo sozinho.</p>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="icon">📄</div>
+            <div class="text">
+                <h3>PDF em Alta Definição</h3>
+                <p>Gera arquivo pronto para enviar no WhatsApp ou imprimir.</p>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="icon">🔓</div>
+            <div class="text">
+                <h3>Sem Bloqueios</h3>
+                <p>Não precisa criar conta, nem pagar mensalidade.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="tutorial">
+        <h2>⚠️ Como Instalar no Android?</h2>
+        <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Como este é um App exclusivo (fora da Play Store), seu celular pode pedir uma permissão.</p>
+        
+        <div class="step">
+            <div class="num">1</div>
+            <p>Toque no botão amarelo acima para baixar o arquivo.</p>
+        </div>
+        <div class="step">
+            <div class="num">2</div>
+            <p>Se aparecer "Arquivo pode ser nocivo", toque em <strong>Fazer o download mesmo assim</strong> (é apenas um aviso padrão do Android).</p>
+        </div>
+        <div class="step">
+            <div class="num">3</div>
+            <p>Ao abrir, se pedir permissão, vá em <strong>Configurações</strong> e ative <strong>"Permitir desta fonte"</strong>.</p>
+        </div>
+        <div class="step">
+            <div class="num">4</div>
+            <p>Toque em <strong>Instalar</strong> e pronto!</p>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2024 CV Builder. Todos os direitos reservados.<br>
+        Termos de Uso | Privacidade
+    </footer>
+
+</body>
+</html>
