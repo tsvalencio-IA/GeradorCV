@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cv-builder-v3';
+const CACHE_NAME = 'cv-pro-v4'; // Mudei a versão para forçar atualização
 const FILES_TO_CACHE = [
   './',
   './index.html',
@@ -10,7 +10,6 @@ const FILES_TO_CACHE = [
 self.addEventListener('install', (evt) => {
   evt.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('📦 Instalando arquivos offline...');
       return cache.addAll(FILES_TO_CACHE);
     })
   );
@@ -33,7 +32,6 @@ self.addEventListener('activate', (evt) => {
 self.addEventListener('fetch', (evt) => {
   evt.respondWith(
     caches.match(evt.request).then((res) => {
-      // Se tiver no cache, usa. Se não, busca na web.
       return res || fetch(evt.request);
     })
   );
