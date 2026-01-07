@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cv-pro-v4'; // Mudei a versão para forçar atualização
+const CACHE_NAME = 'cv-pro-v5'; // Versão atualizada
 const FILES_TO_CACHE = [
   './',
   './index.html',
