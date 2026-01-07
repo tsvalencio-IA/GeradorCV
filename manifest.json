@@ -1,6 +1,6 @@
 {
   "name": "Gerador de Currículo PRO",
-  "short_name": "CV Maker",
+  "short_name": "CV Pro",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
