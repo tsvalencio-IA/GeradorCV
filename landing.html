@@ -7,19 +7,23 @@
 <meta name="theme-color" content="#2563eb">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
 <style>
-    /* --- DESIGN MODERNO E LIMPO --- */
+    /* --- DESIGN GERAL --- */
     :root { --primary: #2563eb; --dark: #1e3a8a; --accent: #fbbf24; }
-    body { margin: 0; padding: 0; font-family: 'Roboto', sans-serif; background: #f0f2f5; color: #333; }
+    body { margin: 0; padding: 0; font-family: 'Roboto', sans-serif; background: #f0f2f5; color: #333; overflow-x: hidden; }
     
-    /* HERO SECTION (CABEÇALHO) */
+    /* --- HERO SECTION (TOPO) --- */
     .hero {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
-        color: white; padding: 60px 20px; text-align: center;
-        border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+        background: linear-gradient(180deg, var(--primary) 0%, var(--dark) 100%);
+        color: white; padding: 40px 20px 80px 20px; text-align: center;
+        border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
+        position: relative;
+        /* Espaço extra embaixo para o celular flutuante encavalar */
+        margin-bottom: 100px; 
     }
+
     .logo { font-size: 14px; font-weight: bold; letter-spacing: 2px; opacity: 0.8; margin-bottom: 20px; text-transform: uppercase; }
     h1 { font-size: 32px; font-weight: 900; margin: 0 0 15px 0; line-height: 1.1; }
-    p.sub { font-size: 18px; opacity: 0.9; margin-bottom: 30px; font-weight: 300; }
+    p.sub { font-size: 18px; opacity: 0.9; margin-bottom: 30px; font-weight: 300; max-width: 500px; margin-left: auto; margin-right: auto; }
     
     /* BOTÃO DE DOWNLOAD PULSANTE */
     .btn-download {
@@ -30,6 +34,7 @@
         transition: transform 0.2s;
         text-transform: uppercase;
         animation: pulse 2s infinite;
+        position: relative; z-index: 10;
     }
     .btn-download:active { transform: scale(0.95); }
     
@@ -39,22 +44,86 @@
         100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
     }
 
-    /* VANTAGENS */
-    .features { padding: 40px 20px; display: flex; flex-direction: column; gap: 20px; max-width: 600px; margin: 0 auto; }
+    /* --- MOLDURA DO CELULAR (COM GALERIA) --- */
+    .phone-wrapper {
+        position: relative;
+        margin-top: 40px;
+        display: flex;
+        justify-content: center;
+        perspective: 1000px;
+        margin-bottom: -150px; /* Puxa o conteúdo de baixo para cima */
+    }
+
+    .phone-mockup {
+        width: 260px; /* Largura padrão de celular */
+        height: 520px; /* Altura proporcional */
+        background: #000;
+        border-radius: 40px;
+        border: 12px solid #111;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        overflow: hidden; /* Tudo que sair da borda é cortado */
+        position: relative;
+        animation: float 6s ease-in-out infinite;
+    }
+
+    /* A ÁREA DE ROLAGEM DENTRO DO CELULAR */
+    .screen-scroll {
+        display: flex;
+        overflow-x: auto; /* Permite rolar para o lado */
+        scroll-snap-type: x mandatory; /* Faz a imagem "travar" no centro */
+        height: 100%;
+        width: 100%;
+        scrollbar-width: none; /* Esconde barra no Firefox */
+    }
+    .screen-scroll::-webkit-scrollbar { display: none; /* Esconde barra no Chrome */ }
+
+    .screen-scroll img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        flex-shrink: 0; /* Impede a imagem de encolher */
+        scroll-snap-align: center; /* Ponto de trava */
+    }
+
+    /* DICA VISUAL PARA DESLIZAR */
+    .swipe-hint {
+        position: absolute;
+        bottom: 20px; left: 50%; transform: translateX(-50%);
+        background: rgba(0,0,0,0.6); color: white;
+        padding: 5px 15px; border-radius: 20px;
+        font-size: 10px; font-weight: bold;
+        pointer-events: none;
+        z-index: 20;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+    }
+
+    /* --- VANTAGENS --- */
+    .features { 
+        padding-top: 180px; /* Espaço para o celular não cobrir o texto */
+        padding-bottom: 40px; 
+        padding-left: 20px; padding-right: 20px;
+        display: flex; flex-direction: column; gap: 20px; 
+        max-width: 600px; margin: 0 auto; 
+    }
     .feature-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 15px; }
     .icon { font-size: 30px; }
     .text h3 { margin: 0; font-size: 16px; font-weight: bold; }
     .text p { margin: 5px 0 0 0; font-size: 13px; color: #666; }
 
-    /* TUTORIAL DE INSTALAÇÃO (IMPORTANTE PARA APK) */
-    .tutorial { background: #fff; padding: 30px 20px; margin-top: 20px; text-align: left; max-width: 600px; margin: 20px auto; border-radius: 10px; border: 1px solid #ddd; }
+    /* --- TUTORIAL --- */
+    .tutorial { background: #fff; padding: 30px 20px; text-align: left; max-width: 600px; margin: 20px auto; border-radius: 10px; border: 1px solid #ddd; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
     .tutorial h2 { font-size: 20px; color: var(--dark); margin-top: 0; }
     .step { display: flex; gap: 10px; margin-bottom: 15px; }
     .num { background: var(--primary); color: white; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px; }
     .step p { margin: 0; font-size: 14px; line-height: 1.5; }
 
-    /* RODAPÉ */
-    footer { text-align: center; padding: 30px; font-size: 12px; color: #999; }
+    /* --- FOOTER --- */
+    footer { text-align: center; padding: 30px; font-size: 12px; color: #999; margin-bottom: 20px; }
 </style>
 </head>
 <body>
@@ -66,6 +135,17 @@
         
         <a href="cv-app.apk" class="btn-download">⬇️ BAIXAR APP GRÁTIS</a>
         <p style="font-size: 11px; margin-top: 10px; opacity: 0.7;">Versão 2.0 • Android • 100% Seguro</p>
+
+        <div class="phone-wrapper">
+            <div class="phone-mockup">
+                <div class="screen-scroll">
+                    <img src="print1.png" alt="Tela 1">
+                    <img src="print2.png" alt="Tela 2">
+                    <img src="print3.png" alt="Tela 3">
+                </div>
+                <div class="swipe-hint">✋ DESLIZE PARA O LADO</div>
+            </div>
+        </div>
     </div>
 
     <div class="features">
