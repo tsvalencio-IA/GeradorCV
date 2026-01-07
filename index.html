@@ -262,68 +262,109 @@
     }
     render();
 
-    // 4. FUNÇÃO CORRIGIDA: PAGINAÇÃO INFINITA
+    // 5. FUNÇÃO DE PDF "ANTI-CORTE" (COM DIAGRAMAÇÃO INTELIGENTE)
     async function processAction() {
+        // Verifica créditos
         if (credits <= 0) { alert("⚠️ LIMITE DE CRÉDITOS! Toque 5 vezes no contador para desbloquear."); return; }
 
         const btn = document.getElementById("btnGenerate");
         const oldText = btn.innerText;
-        btn.innerText = "⏳ Gerando PDF (Pode demorar)..."; 
+        btn.innerText = "⏳ Diagramando Páginas..."; 
         btn.disabled = true;
 
         try {
-            // A. Clona e prepara o elemento (Invisível)
+            // A. CLONAGEM PARA AMBIENTE DE TESTE
             const original = document.getElementById("cv-paper");
             const clone = original.cloneNode(true);
             
-            // Configura o clone para NÃO ter limite de altura, permitindo que ele cresça o quanto precisar
+            // Configura o clone para largura fixa A4 e altura livre
             clone.style.width = "210mm";
-            clone.style.minHeight = "297mm"; // Altura mínima A4
-            clone.style.height = "auto";     // Altura real baseada no conteúdo
-            clone.style.position = "fixed";
-            clone.style.top = "-10000px";
-            clone.style.left = "0";
-            clone.style.transform = "none"; 
+            clone.style.minHeight = "297mm";
+            clone.style.height = "auto"; 
+            clone.style.position = "absolute"; 
+            clone.style.transform = "none";
             clone.style.margin = "0";
-            clone.style.zIndex = "-1";
-            document.body.appendChild(clone);
+            
+            // Cria um container invisível para renderizar o layout real
+            const container = document.createElement("div");
+            container.style.position = "fixed";
+            container.style.top = "-10000px"; // Esconde da tela
+            container.style.left = "0";
+            container.style.width = "210mm";
+            container.style.zIndex = "-9999";
+            container.appendChild(clone);
+            document.body.appendChild(container);
 
-            // B. Gera a imagem Gigante (Canvas)
-            // Aumentamos a scale para 2 para manter a qualidade
-            const canvas = await html2canvas(clone, {
-                scale: 2, 
-                useCORS: true,
-                windowWidth: 1600
+            // B. LÓGICA DE CORREÇÃO DE QUEBRA (ANTI-GUILHOTINA)
+            // Altura de uma página A4 em pixels CSS (aprox. 1122px)
+            // Usamos 1120px para ter uma margem de segurança
+            const PAGE_HEIGHT_PX = 1120; 
+            
+            // Seleciona todos os blocos de texto que não podem ser cortados ao meio
+            const elements = clone.querySelectorAll('p, h2, h3, h4, li, .contact-info, .form-group div');
+            
+            // Itera sobre cada elemento para ver se ele está na "linha de tiro" do corte
+            elements.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                // Calcula a posição do elemento relativa ao topo do papel
+                const topPos = rect.top - clone.getBoundingClientRect().top;
+                const elHeight = rect.height;
+                const bottomPos = topPos + elHeight;
+
+                // Verifica em qual página o elemento começa e onde termina
+                const pageIndexStart = Math.floor(topPos / PAGE_HEIGHT_PX);
+                const pageIndexEnd = Math.floor(bottomPos / PAGE_HEIGHT_PX);
+
+                // Se o elemento começa numa página (ex: 0) e termina na outra (ex: 1), ele foi cortado!
+                if (pageIndexStart !== pageIndexEnd) {
+                    // Calcula quanto precisamos empurrar para ele cair inteiro na próxima página
+                    // A conta é: (Onde começa a próxima página) - (Onde ele está agora) + (Margem extra)
+                    const nextPageStart = (pageIndexStart + 1) * PAGE_HEIGHT_PX;
+                    const pushDown = nextPageStart - topPos + 20; // +20px de respiro
+                    
+                    // Aplica margem no topo para empurrar. 
+                    // Isso automaticamente empurra todo o resto do conteúdo para baixo.
+                    el.style.marginTop = pushDown + "px";
+                    el.style.display = "block"; // Garante que a margem funcione
+                }
             });
-            document.body.removeChild(clone);
 
-            // C. Lógica de Paginação (Multi-page)
+            // C. GERA A IMAGEM AGORA QUE O TEXTO FOI EMPURRADO
+            const canvas = await html2canvas(clone, {
+                scale: 2, // Qualidade Retina
+                useCORS: true,
+                windowWidth: 1600 // Simula Desktop
+            });
+
+            // Limpeza
+            document.body.removeChild(container);
+
+            // D. CRIA O PDF PAGINADO
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'mm', 'a4');
             
-            const imgWidth = 210; // Largura A4 em mm
-            const pageHeight = 297; // Altura A4 em mm
-            
-            // Calcula a altura da imagem em milímetros
+            const imgWidth = 210; 
+            const pageHeight = 297; 
+            // Altura total da imagem gerada em mm
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
             
             let heightLeft = imgHeight;
             let position = 0;
-            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            const imgData = canvas.toDataURL('image/jpeg', 0.90);
 
-            // Adiciona a primeira página
+            // Página 1
             pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
             heightLeft -= pageHeight;
 
-            // Se sobrar conteúdo, cria novas páginas e "puxa" a imagem para cima
+            // Páginas Seguintes (Loop)
             while (heightLeft > 0) {
-                position = position - pageHeight; // Sobe a imagem
+                position -= pageHeight; // Sobe a imagem para mostrar a parte de baixo
                 pdf.addPage();
                 pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
                 heightLeft -= pageHeight;
             }
 
-            // D. Salvar / Compartilhar
+            // E. FINALIZAÇÃO (SHARE OU SAVE)
             const nameClean = (document.getElementById("nome").value || "Curriculo").replace(/[^a-z0-9]/gi, '_');
             const fileName = `CV_${nameClean}.pdf`;
             const pdfBlob = pdf.output('blob');
@@ -331,23 +372,23 @@
 
             if (navigator.share && navigator.canShare({ files: [file] })) {
                 await navigator.share({
+                    files: [file],
                     title: 'Meu Currículo',
-                    text: 'Segue meu currículo atualizado.',
-                    files: [file]
+                    text: 'Segue meu currículo atualizado.'
                 });
-                credits--; 
+                credits--;
             } else {
                 pdf.save(fileName);
-                alert("PDF com múltiplas páginas salvo em Downloads!");
+                alert("PDF salvo na pasta Downloads!");
                 credits--;
             }
 
             localStorage.setItem(KEY_CREDITS, credits);
             updateUI();
 
-        } catch (error) {
-            console.error(error);
-            alert("Erro ao gerar PDF: " + error.message);
+        } catch (e) {
+            console.error(e);
+            alert("Erro no processo: " + e.message);
         }
 
         btn.innerText = oldText;
