@@ -103,9 +103,9 @@
     
     .footer-signature { margin-top: 30px; padding: 20px; text-align: center; font-size: 11px; color: #aaa; font-family: monospace; }
 
-    /* --- ESTILOS DOS LAYOUTS (MANTIDOS) --- */
+    /* --- ESTILOS DOS LAYOUTS --- */
     .layout-modern { display: grid; grid-template-columns: 32% 68%; height: 100%; }
-    .layout-modern .sidebar { background: #2d3748; color: white; padding: 25px; min-height: 297mm; }
+    .layout-modern .sidebar { background: #2d3748; color: white; padding: 25px; min-height: 297mm; height: 100%; }
     .layout-modern .main { padding: 30px; color: #333; }
     .layout-modern h2 { margin: 0; font-size: 28px; text-transform: uppercase; line-height: 1; }
     .layout-modern h3 { font-size: 16px; border-bottom: 2px solid #ddd; margin: 20px 0 10px 0; text-transform: uppercase; }
@@ -192,7 +192,6 @@
     }
     updateUI();
 
-    // Backdoor Admin (5 toques)
     let taps = 0;
     function unlockAdmin() {
         taps++;
@@ -205,7 +204,7 @@
         setTimeout(() => taps = 0, 2000);
     }
 
-    // 3. DADOS E RENDERIZAÇÃO
+    // 3. DADOS
     const JOBS = {
         "mecanico": { r: "Experiência em mecânica geral e diagnóstico automotivo.", s: "• Motor\n• Freios\n• Injeção Eletrônica", e: "Oficina Central (2020-Atual)\nMecânico Líder." },
         "vendedor": { r: "Vendedor focado em metas e satisfação do cliente.", s: "• Vendas Diretas\n• Negociação\n• CRM", e: "Magazine Varejo (2021-Atual)\nVendedor Senior." },
@@ -252,7 +251,6 @@
         const t = txt => txt ? txt.replace(/\n/g, "<br>") : "";
         
         let h = "";
-        // Lógica de Templates HTML
         if (d.layout === 'modern') {
             h = `<div class="sidebar">${photo?`<img src="${photo}" class="cv-img">`:''}<h3>Contato</h3><p class="contact-info">${d.tel}<br>${d.email}<br>${d.city}</p><h3>Habilidades</h3><p>${t(d.skills)}</p></div><div class="main"><h2>${d.nome}</h2><div style="color:#2563eb;font-weight:bold;margin-bottom:20px">${d.cargo}</div><h3>Resumo</h3><p>${t(d.resumo)}</p><h3>Experiência</h3><p>${t(d.exp)}</p><h3>Formação</h3><p>${t(d.edu)}</p></div>`;
         } else if (d.layout === 'classic') {
@@ -264,61 +262,73 @@
     }
     render();
 
-    // 4. GERAÇÃO E COMPARTILHAMENTO (CORRIGIDO PARA ANDROID/PWA)
+    // 4. FUNÇÃO CORRIGIDA: PAGINAÇÃO INFINITA
     async function processAction() {
         if (credits <= 0) { alert("⚠️ LIMITE DE CRÉDITOS! Toque 5 vezes no contador para desbloquear."); return; }
 
         const btn = document.getElementById("btnGenerate");
         const oldText = btn.innerText;
-        btn.innerText = "⏳ Gerando PDF (Aguarde)..."; 
+        btn.innerText = "⏳ Gerando PDF (Pode demorar)..."; 
         btn.disabled = true;
 
         try {
-            // A. PREPARAÇÃO DO CLONE (SOLUÇÃO DE RESOLUÇÃO)
-            // Criamos um container invisível, mas renderizado, para enganar o html2canvas
+            // A. Clona e prepara o elemento (Invisível)
             const original = document.getElementById("cv-paper");
             const clone = original.cloneNode(true);
             
-            // Força o clone a ser um A4 perfeito, ignorando o zoom do celular
+            // Configura o clone para NÃO ter limite de altura, permitindo que ele cresça o quanto precisar
             clone.style.width = "210mm";
-            clone.style.minHeight = "297mm";
+            clone.style.minHeight = "297mm"; // Altura mínima A4
+            clone.style.height = "auto";     // Altura real baseada no conteúdo
             clone.style.position = "fixed";
-            clone.style.top = "-10000px"; // Esconde da vista
+            clone.style.top = "-10000px";
             clone.style.left = "0";
             clone.style.transform = "none"; 
             clone.style.margin = "0";
             clone.style.zIndex = "-1";
             document.body.appendChild(clone);
 
-            // B. GERAÇÃO DA IMAGEM
-            // windowWidth: 1600 simula um desktop para que o layout não quebre
+            // B. Gera a imagem Gigante (Canvas)
+            // Aumentamos a scale para 2 para manter a qualidade
             const canvas = await html2canvas(clone, {
-                scale: 2, // Alta qualidade
+                scale: 2, 
                 useCORS: true,
-                windowWidth: 1600, 
-                windowHeight: 2000,
-                x: 0,
-                y: 0,
-                scrollY: 0
+                windowWidth: 1600
             });
-            document.body.removeChild(clone); // Limpa a memória
+            document.body.removeChild(clone);
 
-            // C. CRIAÇÃO DO PDF
+            // C. Lógica de Paginação (Multi-page)
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'mm', 'a4');
-            const imgData = canvas.toDataURL('image/jpeg', 0.95); // JPEG é mais leve que PNG
-            const imgWidth = 210;
+            
+            const imgWidth = 210; // Largura A4 em mm
+            const pageHeight = 297; // Altura A4 em mm
+            
+            // Calcula a altura da imagem em milímetros
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
             
-            pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+            let heightLeft = imgHeight;
+            let position = 0;
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
-            // D. ESTRATÉGIA DE COMPARTILHAMENTO (Web Share API)
+            // Adiciona a primeira página
+            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            // Se sobrar conteúdo, cria novas páginas e "puxa" a imagem para cima
+            while (heightLeft > 0) {
+                position = position - pageHeight; // Sobe a imagem
+                pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            // D. Salvar / Compartilhar
             const nameClean = (document.getElementById("nome").value || "Curriculo").replace(/[^a-z0-9]/gi, '_');
             const fileName = `CV_${nameClean}.pdf`;
             const pdfBlob = pdf.output('blob');
             const file = new File([pdfBlob], fileName, { type: "application/pdf" });
 
-            // Tenta o compartilhamento nativo (Padrão Android Moderno)
             if (navigator.share && navigator.canShare({ files: [file] })) {
                 await navigator.share({
                     title: 'Meu Currículo',
@@ -327,9 +337,8 @@
                 });
                 credits--; 
             } else {
-                // Fallback: Tenta download direto (funciona em Desktop, falha em alguns WebViews)
                 pdf.save(fileName);
-                alert("O PDF foi salvo na pasta de Downloads.");
+                alert("PDF com múltiplas páginas salvo em Downloads!");
                 credits--;
             }
 
