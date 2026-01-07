@@ -1,5 +1,5 @@
-const CACHE_NAME = 'cv-pro-v_final';
-const FILES_TO_CACHE = [
+const CACHE_NAME = 'cv-pro-v6-final';
+const FILES = [
   './',
   './index.html',
   './manifest.json',
@@ -7,32 +7,21 @@ const FILES_TO_CACHE = [
   './libs/html2canvas.min.js'
 ];
 
-self.addEventListener('install', (evt) => {
-  evt.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(FILES_TO_CACHE);
-    })
-  );
+// Instalação: Cacheia os arquivos essenciais
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(FILES)));
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (evt) => {
-  evt.waitUntil(
-    caches.keys().then((keyList) => {
-      return Promise.all(keyList.map((key) => {
-        if (key !== CACHE_NAME) {
-          return caches.delete(key);
-        }
-      }));
-    })
-  );
+// Ativação: Limpa caches velhos
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(
+    keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+  )));
   self.clients.claim();
 });
 
-self.addEventListener('fetch', (evt) => {
-  evt.respondWith(
-    caches.match(evt.request).then((res) => {
-      return res || fetch(evt.request);
-    })
-  );
+// Fetch: Serve do cache se estiver offline
+self.addEventListener('fetch', e => {
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
 });
