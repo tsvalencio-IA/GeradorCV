@@ -1,10 +1,12 @@
 {
   "name": "Gerador de Currículo PRO",
   "short_name": "CV Pro",
-  "start_url": "https://tsvalencio-ia.github.io/GeradorCV",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "scope": "./",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/3135/3135679.png",
@@ -16,13 +18,5 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "lang": "pt",
-  "categories": [
-    "business",
-    "finance",
-    "productivity",
-    "social",
-    "utilities"
   ]
 }
