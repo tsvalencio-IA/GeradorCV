@@ -14,87 +14,81 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
 <style>
-    /* CORE STYLES */
+    /* --- ESTILOS DO SISTEMA --- */
     :root { --primary: #2563eb; --secondary: #1e40af; --bg-app: #f8f9fa; --bg-panel: #ffffff; --bg-preview: #525659; --text: #1f2937; --border: #e5e7eb; --input-bg: #f9fafb; }
     * { box-sizing: border-box; outline: none; }
     body { margin: 0; padding: 0; background: var(--bg-app); font-family: 'Roboto', sans-serif; color: var(--text); height: 100vh; overflow: hidden; }
     
-    /* LAYOUT */
     .app-container { display: flex; width: 100vw; height: 100vh; }
-    .editor-panel { width: 450px; min-width: 350px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; height: 100%; overflow-y: auto; box-shadow: 2px 0 10px rgba(0,0,0,0.05); z-index: 10; }
-    .editor-content { padding: 30px; padding-bottom: 80px; } /* Espaço extra footer */
     
-    /* BRANDING & FORM */
+    /* PAINEL ESQUERDO (EDITOR) */
+    .editor-panel { width: 450px; min-width: 350px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; height: 100%; overflow-y: auto; z-index: 10; padding-bottom: 20px; }
+    .editor-content { padding: 30px; padding-bottom: 60px; }
+    
     .header-branding { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid var(--primary); }
-    .header-branding h1 { margin: 0; font-size: 20px; color: var(--primary); font-weight: 700; letter-spacing: -0.5px; }
+    .header-branding h1 { margin: 0; font-size: 20px; color: var(--primary); font-weight: 700; }
     .header-branding span { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 500; }
-    
-    .form-group { margin-bottom: 18px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: #374151; text-transform: uppercase; }
-    input, select, textarea { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 6px; font-size: 14px; transition: 0.2s; font-family: inherit; color: #111; }
-    input:focus, select:focus, textarea:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-    textarea { resize: vertical; min-height: 80px; }
-    
-    /* BUTTONS */
-    .btn-group { display: flex; gap: 10px; margin-top: 30px; flex-direction: column; }
-    button { width: 100%; padding: 16px; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; transition: transform 0.1s, box-shadow 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-    button:active { transform: scale(0.98); }
-    
-    .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3); }
-    .btn-whatsapp { background: #25D366; color: white; box-shadow: 0 4px 6px -1px rgba(37, 211, 102, 0.3); }
-    
-    .footer-signature { margin-top: auto; padding: 20px; text-align: center; font-size: 11px; color: #9ca3af; font-family: monospace; border-top: 1px solid #f3f4f6; background: #fff; }
-    
-    /* PREVIEW PANEL */
-    .preview-panel { flex: 1; background: var(--bg-preview); display: flex; justify-content: center; align-items: flex-start; padding: 40px; overflow: auto; position: relative; }
-    .paper-container { transform-origin: top center; transition: transform 0.3s ease; box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
-    #cv-paper { width: 210mm; min-height: 297mm; background: white; padding: 0; overflow: hidden; position: relative; }
 
-    /* RESPONSIVE & MOBILE */
+    /* FORMULÁRIO */
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px; color: #374151; text-transform: uppercase; }
+    input, select, textarea { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 6px; font-size: 14px; color: #111; }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); background: #fff; }
+    textarea { resize: vertical; min-height: 80px; }
+
+    /* BOTÕES */
+    .btn-group { display: flex; gap: 10px; margin-top: 25px; flex-direction: column; }
+    button { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-whatsapp { background: #25D366; color: white; }
+
+    /* ÁREA DE CRÉDITOS (IMPORTANTE: CLICÁVEL) */
+    .credit-badge { background: #eff6ff; border: 1px solid #bfdbfe; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: 700; color: #1e40af; font-size: 14px; cursor: pointer; user-select: none; transition: 0.2s; }
+    .credit-badge:active { transform: scale(0.98); background: #dbeafe; }
+
+    /* RODAPÉ */
+    .footer-signature { margin-top: auto; padding: 20px; text-align: center; font-size: 11px; color: #9ca3af; font-family: monospace; border-top: 1px solid #f3f4f6; }
+
+    /* PAINEL DIREITO (PREVIEW) */
+    .preview-panel { flex: 1; background: var(--bg-preview); display: flex; justify-content: center; align-items: flex-start; padding: 40px; overflow: auto; }
+    .paper-container { transform-origin: top center; transition: transform 0.3s ease; box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
+    #cv-paper { width: 210mm; min-height: 297mm; background: white; overflow: hidden; position: relative; }
+
+    /* --- RESPONSIVIDADE (MOBILE FIX) --- */
     @media (min-width: 901px) {
         @media (max-width: 1600px) { .paper-container { transform: scale(0.85); margin-bottom: -15%; } }
         @media (max-width: 1366px) { .paper-container { transform: scale(0.75); margin-bottom: -25%; } }
-        @media (max-width: 1024px) { .paper-container { transform: scale(0.60); margin-bottom: -40%; } .editor-panel { width: 320px; } }
     }
     @media (max-width: 900px) {
         body { overflow: auto; height: auto; }
         .app-container { flex-direction: column; width: 100%; height: auto; }
-        .editor-panel { width: 100%; height: auto; border-right: none; overflow: visible; padding-bottom: 20px; }
-        .preview-panel { display: flex; height: auto; padding: 15px; background: #525659; overflow: hidden; min-height: 550px; }
+        .editor-panel { width: 100%; height: auto; border-right: none; overflow: visible; }
+        .preview-panel { display: flex; height: auto; padding: 10px; background: #525659; min-height: 600px; overflow: hidden; }
         .paper-container { transform: scale(0.44); transform-origin: top center; margin-top: 10px; margin-bottom: -150px; }
-        .btn-group { padding-bottom: 40px; }
+        .btn-group { padding-bottom: 30px; }
     }
 
-    /* CV LAYOUTS */
+    /* LAYOUTS DO CURRÍCULO */
     .layout-modern { display: grid; grid-template-columns: 32% 68%; height: 100%; min-height: 297mm; }
-    .layout-modern .sidebar { background: #2d3748; color: white; padding: 30px 20px; text-align: left; }
+    .layout-modern .sidebar { background: #2d3748; color: white; padding: 30px 20px; }
     .layout-modern .main { padding: 40px 30px; color: #333; }
-    .layout-modern img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin-bottom: 25px; border: 4px solid rgba(255,255,255,0.2); display: block; margin: 0 auto 25px auto; }
+    .layout-modern img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin: 0 auto 25px auto; display: block; border: 4px solid rgba(255,255,255,0.2); }
     .layout-modern h2 { margin: 0; font-size: 32px; color: #1a202c; text-transform: uppercase; font-weight: 800; line-height: 1; }
-    .layout-modern .role-title { font-size: 14px; color: #2563eb; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; margin-bottom: 30px; }
-    .layout-modern h3 { font-size: 14px; border-bottom: 2px solid #e2e8f0; margin-top: 30px; margin-bottom: 12px; padding-bottom: 5px; text-transform: uppercase; color: #4a5568; letter-spacing: 1px; }
-    .layout-modern .sidebar h3 { border-bottom: 1px solid #4a5568; color: #a0aec0; margin-top: 30px; }
-    .layout-modern .contact-item { font-size: 12px; margin-bottom: 8px; color: #cbd5e0; display: flex; align-items: center; gap: 8px; }
+    .layout-modern .role-title { font-size: 14px; color: #2563eb; font-weight: 700; text-transform: uppercase; margin: 5px 0 30px 0; }
+    .layout-modern h3 { font-size: 14px; border-bottom: 2px solid #e2e8f0; margin: 30px 0 12px 0; text-transform: uppercase; color: #4a5568; }
+    .layout-modern .sidebar h3 { border-bottom: 1px solid #4a5568; color: #a0aec0; }
     .layout-modern p { font-size: 13px; line-height: 1.6; color: #4a5568; margin-bottom: 15px; }
     .layout-modern .sidebar p { color: #cbd5e0; }
 
     .layout-classic { padding: 50px; color: #000; }
     .layout-classic .header { text-align: center; border-bottom: 1px solid #000; padding-bottom: 25px; margin-bottom: 30px; }
-    .layout-classic h2 { font-size: 36px; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
-    .layout-classic .sub-header { font-size: 14px; margin-top: 8px; font-style: italic; }
+    .layout-classic h2 { font-size: 36px; margin: 0; text-transform: uppercase; }
     .layout-classic h3 { background: #f3f4f6; padding: 6px 10px; font-size: 16px; margin-top: 30px; text-transform: uppercase; border-left: 5px solid #333; font-weight: 700; }
 
     .layout-executive { padding: 50px; }
     .layout-executive .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #1e40af; padding-bottom: 25px; margin-bottom: 30px; }
-    .layout-executive .header-text { max-width: 70%; }
-    .layout-executive img { width: 110px; height: 110px; border-radius: 6px; object-fit: cover; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .layout-executive h2 { font-size: 38px; color: #1e40af; margin: 0; line-height: 1; }
-    .layout-executive .role-text { font-size: 16px; color: #4b5563; margin-top: 5px; font-weight: 500; }
-    .layout-executive .contact-line { font-size: 12px; color: #6b7280; margin-top: 10px; }
-    .layout-executive h3 { color: #1e40af; font-size: 18px; margin-top: 30px; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px; font-weight: 700; }
-
-    .credit-badge { background: #eff6ff; border: 1px solid #bfdbfe; padding: 15px; border-radius: 8px; margin-bottom: 25px; text-align: center; font-weight: 700; color: #1e40af; font-size: 14px; cursor: pointer; user-select: none; }
-    .error-msg { color: #dc2626; font-size: 12px; margin-top: 5px; display: block; }
+    .layout-executive h3 { color: #1e40af; font-size: 18px; margin-top: 30px; border-bottom: 1px solid #e5e7eb; font-weight: 700; }
 </style>
 </head>
 <body>
@@ -104,163 +98,200 @@
         <div class="editor-content">
             <div class="header-branding"><h1>CV BUILDER PRO</h1><span>Enterprise Edition</span></div>
             
-            <div class="credit-badge" id="creditDisplay" onclick="adminUnlock()">Validando Licença...</div>
+            <div class="credit-badge" id="creditDisplay" onclick="adminUnlock()">Carregando licença...</div>
 
-            <div class="form-group"><label>🎨 Estilo</label><select id="layoutSelector" onchange="updatePreview()"><option value="modern">Moderno</option><option value="classic">Clássico</option><option value="executive">Executivo</option></select></div>
-            <div class="form-group"><label>🤖 Auto-Preencher</label><select id="jobSelector" onchange="autoFillJob()"><option value="">Selecione...</option><option value="mecanico">Mecânico</option><option value="vendedor">Vendedor</option><option value="admin">Administrativo</option><option value="ti">Técnico TI</option><option value="saude">Saúde</option></select></div>
-            <hr style="border:0; border-top:1px solid #eee; margin:25px 0;">
+            <div class="form-group"><label>🎨 Layout</label><select id="layoutSelector" onchange="updatePreview()"><option value="modern">Moderno</option><option value="classic">Clássico</option><option value="executive">Executivo</option></select></div>
+            <div class="form-group"><label>🤖 Auto-Preencher</label><select id="jobSelector" onchange="autoFillJob()"><option value="">Selecione a profissão...</option><option value="mecanico">Mecânico</option><option value="vendedor">Vendedor</option><option value="admin">Administrativo</option><option value="ti">Técnico TI</option><option value="saude">Saúde</option></select></div>
+            
+            <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+            
             <div class="form-group"><label>📸 Foto</label><input type="file" id="foto" accept="image/*"></div>
             <div class="form-group"><label>Nome</label><input id="nome" placeholder="Nome Completo" oninput="updatePreview()"></div>
-            <div class="form-group"><label>Telefone</label><input id="telefone" placeholder="Telefone" oninput="updatePreview()"></div>
-            <div class="form-group"><label>Email</label><input id="email" placeholder="Email" oninput="updatePreview()"></div>
+            <div class="form-group"><label>Telefone</label><input id="telefone" placeholder="(DD) 90000-0000" oninput="updatePreview()"></div>
+            <div class="form-group"><label>Email</label><input id="email" placeholder="email@exemplo.com" oninput="updatePreview()"></div>
             <div class="form-group"><label>Cidade</label><input id="local" placeholder="Cidade - UF" oninput="updatePreview()"></div>
-            <div class="form-group"><label>Cargo</label><input id="cargo" placeholder="Cargo Pretendido" oninput="updatePreview()"></div>
+            <div class="form-group"><label>Cargo</label><input id="cargo" placeholder="Ex: Motorista" oninput="updatePreview()"></div>
             <div class="form-group"><label>Resumo</label><textarea id="resumo" oninput="updatePreview()"></textarea></div>
             <div class="form-group"><label>Experiência</label><textarea id="exp" rows="6" oninput="updatePreview()"></textarea></div>
             <div class="form-group"><label>Formação</label><textarea id="formacao" oninput="updatePreview()"></textarea></div>
             <div class="form-group"><label>Habilidades</label><textarea id="skills" oninput="updatePreview()"></textarea></div>
 
             <div class="btn-group">
-                <button class="btn-whatsapp" onclick="shareOrDownload('whatsapp')">📱 Enviar CV no WhatsApp</button>
-                <button class="btn-primary" onclick="shareOrDownload('save')">💾 Baixar Arquivo PDF</button>
+                <button class="btn-whatsapp" onclick="processAction('whatsapp')">📱 Enviar via WhatsApp</button>
+                <button class="btn-primary" onclick="processAction('download')">💾 Baixar PDF</button>
             </div>
             
             <p style="text-align:center; font-size:10px; color:#ccc; margin-top:15px;">ID: <span id="licencaID">LOADING...</span></p>
         </div>
         <div class="footer-signature">Desenvolvido com 🤖 por thIAguinho Soluções</div>
     </div>
-    <div class="preview-panel"><div class="paper-container"><div id="cv-paper" class="layout-modern"></div></div></div>
+    <div class="preview-panel">
+        <div class="paper-container"><div id="cv-paper" class="layout-modern"></div></div>
+    </div>
 </div>
 
 <script>
-    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js'); }); }
-
-    // --- MONETIZAÇÃO OFUSCADA ---
-    // Usamos nomes estranhos para "esconder" do usuário leigo
-    const STORAGE_KEY = "_sys_cfg_88"; 
-    const LICENSE_KEY = "_k_99";
-    const INITIAL = 3; 
-
-    let userCredits = parseInt(localStorage.getItem(STORAGE_KEY));
-    if (isNaN(userCredits)) { userCredits = INITIAL; localStorage.setItem(STORAGE_KEY, userCredits); }
-    
-    let licenseID = localStorage.getItem(LICENSE_KEY);
-    if(!licenseID) { licenseID = "USR-" + Math.floor(Math.random() * 999999); localStorage.setItem(LICENSE_KEY, licenseID); }
-    document.getElementById("licencaID").innerText = licenseID;
-
-    // --- RECARGA SECRETA (Toque 5x no aviso) ---
-    let secretClicks = 0;
-    function adminUnlock() {
-        secretClicks++;
-        if (secretClicks === 5) {
-            const pass = prompt("🔐 ACESSO ADM\nDigite o token de recarga:");
-            if (pass === "admin123") { // SENHA
-                localStorage.setItem(STORAGE_KEY, 50);
-                alert("✅ 50 CRÉDITOS LIBERADOS!");
-                location.reload();
-            } else if (pass !== null) {
-                alert("❌ Token inválido.");
-            }
-            secretClicks = 0;
-        }
-        setTimeout(() => { secretClicks = 0; }, 2500);
+    // 1. REGISTRA O SERVICE WORKER (OFFLINE)
+    if ('serviceWorker' in navigator) { 
+        window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js')); 
     }
 
+    // 2. SISTEMA DE CRÉDITOS OFUSCADO
+    const KEY_CREDITS = "_sys_config_x99"; // Nome difícil pra usuário não achar fácil
+    const KEY_ID = "_sys_id_user";
+    const CREDITS_INITIAL = 3; 
+
+    let userCredits = parseInt(localStorage.getItem(KEY_CREDITS));
+    if (isNaN(userCredits)) { userCredits = CREDITS_INITIAL; localStorage.setItem(KEY_CREDITS, userCredits); }
+    
+    let userID = localStorage.getItem(KEY_ID);
+    if(!userID) { userID = "USR-" + Math.floor(Math.random() * 999999); localStorage.setItem(KEY_ID, userID); }
+    document.getElementById("licencaID").innerText = userID;
+
+    // 3. BACKDOOR (O SEGREDO DA SENHA)
+    let tapCount = 0;
+    function adminUnlock() {
+        tapCount++;
+        if (tapCount === 5) {
+            const pwd = prompt("🔐 SUPORTE TÉCNICO\nInsira o código de liberação:");
+            if (pwd === "admin123") { // <--- SUA SENHA AQUI
+                localStorage.setItem(KEY_CREDITS, 50);
+                alert("✅ PACOTE LIBERADO!\nVocê agora tem 50 créditos.");
+                location.reload();
+            } else if (pwd !== null) {
+                alert("❌ Código inválido.");
+            }
+            tapCount = 0;
+        }
+        setTimeout(() => { tapCount = 0; }, 2000); // Reseta se demorar
+    }
+
+    // 4. ATUALIZA A TELA DE CRÉDITOS
+    function updateCreditsUI() {
+        const el = document.getElementById("creditDisplay");
+        if(userCredits > 0) {
+            el.innerHTML = `CRÉDITOS RESTANTES: ${userCredits}`;
+            el.style.background = "#eff6ff"; el.style.color = "#1e40af";
+        } else {
+            el.innerHTML = `LIMITE ATINGIDO<br><span style="font-size:10px">(Toque para liberar com código)</span>`;
+            el.style.background = "#fef2f2"; el.style.color = "#991b1b";
+        }
+    }
+    updateCreditsUI();
+
+    // 5. INTELIGÊNCIA DE PREENCHIMENTO
     const JOB_DATA = {
-        "mecanico": { resumo: "Experiência em manutenção preventiva e corretiva de veículos. Diagnóstico de falhas.", skills: "• Injeção Eletrônica\n• Freios ABS\n• Câmbio", exp: "Oficina X - Mecânico (2020-Atual)\nManutenção geral." },
-        "vendedor": { resumo: "Vendedor focado em metas e atendimento. Habilidade em negociação.", skills: "• Negociação\n• CRM\n• Oratória", exp: "Loja Y - Vendedor (2021-Atual)\nVendas." },
-        "admin": { resumo: "Assistente administrativo com domínio de rotinas de escritório.", skills: "• Excel\n• NFe\n• Redação", exp: "Escritório Z - Assistente (2022-Atual)\nRotinas." },
-        "ti": { resumo: "Técnico de TI com experiência em hardware e redes.", skills: "• Hardware\n• Redes\n• Windows", exp: "Tech - Suporte (2021-Atual)\nManutenção." },
-        "saude": { resumo: "Profissional de saúde com foco em atendimento humanizado.", skills: "• Primeiros Socorros\n• Triagem", exp: "Hospital W - Técnico (2019-Atual)\nPlantões." }
+        "mecanico": { resumo: "Experiência em manutenção preventiva e corretiva.", skills: "• Injeção Eletrônica\n• Freios\n• Câmbio", exp: "Oficina X (2020-Atual)\nMecânico Geral." },
+        "vendedor": { resumo: "Focado em metas e atendimento ao cliente.", skills: "• Negociação\n• CRM\n• Vendas", exp: "Loja Y (2021-Atual)\nVendedor Sênior." },
+        "admin": { resumo: "Organizado, domínio de rotinas administrativas.", skills: "• Excel\n• NFe\n• Finanças", exp: "Escritório Z (2022-Atual)\nAuxiliar Adm." },
+        "ti": { resumo: "Suporte técnico e manutenção de computadores.", skills: "• Hardware\n• Windows\n• Redes", exp: "Tech Info (2021-Atual)\nSuporte N1." },
+        "saude": { resumo: "Atendimento humanizado e cuidados de enfermagem.", skills: "• Primeiros Socorros\n• Triagem", exp: "Hospital W (2019-Atual)\nTécnico." }
     };
 
     let fotoData = "";
     document.getElementById("foto").addEventListener("change", e => { if(e.target.files[0]){ const r = new FileReader(); r.onload = ev => { fotoData = ev.target.result; updatePreview(); }; r.readAsDataURL(e.target.files[0]); } });
-
-    function updateCreditsUI() {
-        const d = document.getElementById("creditDisplay");
-        if(userCredits > 0) {
-            d.innerHTML = `CRÉDITOS: ${userCredits}`; d.style.background = "#eff6ff"; d.style.color = "#1e40af";
-        } else {
-            d.innerHTML = `LIMITE ATINGIDO <br><span class="error-msg" style="font-size:10px">(Toque para liberar c/ Código)</span>`; d.style.background = "#fef2f2"; d.style.color = "#991b1b";
-        }
-    }
-    updateCreditsUI();
 
     function autoFillJob() {
         const j = document.getElementById("jobSelector").value;
         if(JOB_DATA[j]) { document.getElementById("resumo").value = JOB_DATA[j].resumo; document.getElementById("skills").value = JOB_DATA[j].skills; document.getElementById("exp").value = JOB_DATA[j].exp; updatePreview(); }
     }
 
+    // 6. RENDERIZADOR (VIEW)
     function updatePreview() {
-        const d = { nome: document.getElementById("nome").value || "Seu Nome", telefone: document.getElementById("telefone").value || "(00) 00000-0000", email: document.getElementById("email").value || "email@exemplo.com", local: document.getElementById("local").value || "Cidade - UF", cargo: document.getElementById("cargo").value || "Cargo", resumo: document.getElementById("resumo").value, exp: document.getElementById("exp").value, formacao: document.getElementById("formacao").value, skills: document.getElementById("skills").value, layout: document.getElementById("layoutSelector").value };
-        const p = document.getElementById("cv-paper"); p.className = ""; p.classList.add(`layout-${d.layout}`);
+        const d = { 
+            nome: document.getElementById("nome").value || "Seu Nome", 
+            telefone: document.getElementById("telefone").value || "(00) 00000-0000", 
+            email: document.getElementById("email").value || "email@exemplo.com", 
+            local: document.getElementById("local").value || "Cidade - UF", 
+            cargo: document.getElementById("cargo").value || "Cargo", 
+            resumo: document.getElementById("resumo").value, 
+            exp: document.getElementById("exp").value, 
+            formacao: document.getElementById("formacao").value, 
+            skills: document.getElementById("skills").value, 
+            layout: document.getElementById("layoutSelector").value 
+        };
+        
+        const p = document.getElementById("cv-paper"); 
+        p.className = ""; p.classList.add(`layout-${d.layout}`);
         const fmt = t => t ? t.replace(/\n/g, '<br>') : '';
+        
         let h = "";
         if (d.layout === 'modern') h = `<div class="sidebar">${fotoData ? `<img src="${fotoData}">` : ''}<h3>Contato</h3><div class="contact-item">📞 ${d.telefone}</div><div class="contact-item">📧 ${d.email}</div><div class="contact-item">📍 ${d.local}</div><h3>Competências</h3><p>${fmt(d.skills)}</p></div><div class="main"><h2>${d.nome}</h2><div class="role-title">${d.cargo}</div><h3>Resumo</h3><p>${fmt(d.resumo)}</p><h3>Experiência</h3><p>${fmt(d.exp)}</p><h3>Formação</h3><p>${fmt(d.formacao)}</p></div>`;
         else if (d.layout === 'classic') h = `<div class="header"><h2>${d.nome}</h2><div class="sub-header">${d.telefone} • ${d.email} • ${d.local}</div><div class="sub-header" style="font-weight:bold; margin-top:10px;">${d.cargo}</div></div>${d.resumo ? `<h3>Resumo</h3><p>${fmt(d.resumo)}</p>` : ''}${d.exp ? `<h3>Experiência</h3><p>${fmt(d.exp)}</p>` : ''}${d.formacao ? `<h3>Formação</h3><p>${fmt(d.formacao)}</p>` : ''}${d.skills ? `<h3>Habilidades</h3><p>${fmt(d.skills)}</p>` : ''}`;
         else h = `<div class="header"><div class="header-text"><h2>${d.nome}</h2><div class="role-text">${d.cargo}</div><div class="contact-line">${d.telefone} | ${d.email} | ${d.local}</div></div>${fotoData ? `<img src="${fotoData}">` : ''}</div><h3>Perfil</h3><p>${fmt(d.resumo)}</p><h3>Trajetória</h3><p>${fmt(d.exp)}</p><h3>Educação</h3><p>${fmt(d.formacao)}</p><h3>Skills</h3><p>${fmt(d.skills)}</p>`;
+        
         p.innerHTML = h;
     }
     updatePreview();
 
-    // --- NOVA FUNÇÃO MESTRE: COMPARTILHAR OU SALVAR ---
-    async function shareOrDownload(mode) {
-        if (userCredits <= 0) { alert("⚠️ LIMITE ATINGIDO! Insira o código de desbloqueio."); return; }
+    // 7. MOTOR DE PDF (COM CORREÇÃO PARA CELULAR E SHARE API)
+    async function processAction(actionType) {
+        if (userCredits <= 0) { alert("⚠️ SEU PLANO ACABOU.\nToque 5 vezes na mensagem 'LIMITE ATINGIDO' para inserir o código de recarga."); return; }
 
-        const btn = mode === 'whatsapp' ? document.querySelector('.btn-whatsapp') : document.querySelector('.btn-primary');
+        const btn = actionType === 'whatsapp' ? document.querySelector('.btn-whatsapp') : document.querySelector('.btn-primary');
         const oldTxt = btn.innerHTML;
-        btn.innerHTML = "⏳ Gerando..."; btn.disabled = true;
+        btn.innerHTML = "⏳ Processando..."; btn.disabled = true;
 
         try {
-            // 1. Clonagem (Anti-Bug Mobile)
-            const original = document.getElementById('cv-paper'); const clone = original.cloneNode(true);
-            clone.style.transform = "none"; clone.style.position = "fixed"; clone.style.top = "-9999px"; clone.style.left = "0"; clone.style.width = "210mm"; clone.style.minHeight = "297mm"; clone.style.zIndex = "-1"; clone.style.margin = "0"; 
+            // A. CLONAGEM SILENCIOSA (FIX TEXTO SOBRESCRITO)
+            const original = document.getElementById('cv-paper'); 
+            const clone = original.cloneNode(true);
+            
+            // Configura o clone para ser um A4 perfeito, invisível
+            clone.style.transform = "none"; 
+            clone.style.position = "fixed"; 
+            clone.style.top = "-9999px"; 
+            clone.style.left = "0"; 
+            clone.style.width = "210mm"; 
+            clone.style.minHeight = "297mm"; 
+            clone.style.zIndex = "-1"; 
+            clone.style.margin = "0"; 
             document.body.appendChild(clone);
 
-            // 2. Gerar Canvas
+            // B. GERA A IMAGEM
             const canvas = await html2canvas(clone, { scale: 2, useCORS: true, logging: false, windowWidth: 1200 });
-            document.body.removeChild(clone);
+            document.body.removeChild(clone); // Limpa memória
 
-            // 3. Gerar PDF
+            // C. GERA O PDF
             const { jsPDF } = window.jspdf; 
             const pdf = new jsPDF('p', 'mm', 'a4');
-            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
+            const pdfW = pdf.internal.pageSize.getWidth();
+            const pdfH = pdf.internal.pageSize.getHeight();
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdfW, pdfH);
 
             const safeName = document.getElementById('nome').value.replace(/[^a-z0-9]/gi, '_') || "curriculo";
             const fileName = `Curriculo_${safeName}.pdf`;
 
-            // --- LÓGICA DE COMPARTILHAMENTO NATIVO ---
-            if (mode === 'whatsapp' && navigator.share) {
-                // Transforma o PDF em um Arquivo Virtual (Blob)
-                const pdfBlob = pdf.output('blob');
-                const file = new File([pdfBlob], fileName, { type: "application/pdf" });
-
-                // Tenta abrir o Menu de Compartilhamento do Android (WhatsApp vai aparecer aqui)
+            // D. DECISÃO: WHATSAPP (SHARE) OU DOWNLOAD
+            if (actionType === 'whatsapp' && navigator.share) {
+                // Tenta compartilhar direto (Anexo Nativo)
+                const blob = pdf.output('blob');
+                const file = new File([blob], fileName, { type: "application/pdf" });
+                
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     await navigator.share({
                         files: [file],
                         title: 'Meu Currículo',
-                        text: `Olá, segue meu currículo (${fileName}) em anexo.`
+                        text: 'Segue meu currículo em PDF.'
                     });
-                    // Sucesso: Consome crédito
-                    userCredits--; localStorage.setItem(STORAGE_KEY, userCredits); updateCreditsUI();
+                    // Sucesso = Desconta crédito
+                    userCredits--; localStorage.setItem(KEY_CREDITS, userCredits); updateCreditsUI();
                 } else {
-                    throw new Error("Seu navegador não suporta envio direto. Baixando arquivo...");
+                    throw new Error("Compartilhamento direto não suportado");
                 }
             } else {
-                // Modo Download (Save) ou Fallback
+                // Fallback: Baixa o arquivo
                 pdf.save(fileName);
-                userCredits--; localStorage.setItem(STORAGE_KEY, userCredits); updateCreditsUI();
-                if(mode === 'whatsapp') alert("⚠️ O arquivo foi baixado! Agora abra o WhatsApp e anexe o arquivo da pasta Downloads.");
+                userCredits--; localStorage.setItem(KEY_CREDITS, userCredits); updateCreditsUI();
+                if (actionType === 'whatsapp') alert("⚠️ O arquivo foi baixado!\nAgora abra o WhatsApp e anexe o PDF da pasta 'Downloads'.");
             }
 
-        } catch (e) { 
+        } catch (e) {
             console.error(e);
-            // Se der erro no Share, tenta salvar normal
-            if (mode === 'whatsapp') alert("⚠️ Não foi possível abrir o WhatsApp direto.\nO arquivo será baixado no seu celular.");
+            // Se der erro no share, força o download
+            if (actionType === 'whatsapp') alert("⚠️ Não foi possível abrir o WhatsApp direto.\nO arquivo será baixado no seu celular.");
         }
-        
+
         btn.innerHTML = oldTxt; btn.disabled = false;
     }
 </script>
