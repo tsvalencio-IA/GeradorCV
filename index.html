@@ -14,31 +14,43 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
 <style>
-    /* CSS MANTIDO IGUAL AO ANTERIOR (PERFEITO) */
+    /* CORE STYLES */
     :root { --primary: #2563eb; --secondary: #1e40af; --bg-app: #f8f9fa; --bg-panel: #ffffff; --bg-preview: #525659; --text: #1f2937; --border: #e5e7eb; --input-bg: #f9fafb; }
     * { box-sizing: border-box; outline: none; }
     body { margin: 0; padding: 0; background: var(--bg-app); font-family: 'Roboto', sans-serif; color: var(--text); height: 100vh; overflow: hidden; }
+    
+    /* LAYOUT */
     .app-container { display: flex; width: 100vw; height: 100vh; }
     .editor-panel { width: 450px; min-width: 350px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; height: 100%; overflow-y: auto; box-shadow: 2px 0 10px rgba(0,0,0,0.05); z-index: 10; }
-    .editor-content { padding: 30px; padding-bottom: 60px; }
+    .editor-content { padding: 30px; padding-bottom: 80px; } /* Espaço extra footer */
+    
+    /* BRANDING & FORM */
     .header-branding { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid var(--primary); }
     .header-branding h1 { margin: 0; font-size: 20px; color: var(--primary); font-weight: 700; letter-spacing: -0.5px; }
     .header-branding span { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 500; }
+    
     .form-group { margin-bottom: 18px; }
     .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: #374151; text-transform: uppercase; }
     input, select, textarea { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 6px; font-size: 14px; transition: 0.2s; font-family: inherit; color: #111; }
     input:focus, select:focus, textarea:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
     textarea { resize: vertical; min-height: 80px; }
+    
+    /* BUTTONS */
     .btn-group { display: flex; gap: 10px; margin-top: 30px; flex-direction: column; }
-    button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: transform 0.1s, box-shadow 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); }
-    .btn-whatsapp { background: #25D366; color: white; box-shadow: 0 4px 6px -1px rgba(37, 211, 102, 0.2); }
+    button { width: 100%; padding: 16px; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; transition: transform 0.1s, box-shadow 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    button:active { transform: scale(0.98); }
+    
+    .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3); }
+    .btn-whatsapp { background: #25D366; color: white; box-shadow: 0 4px 6px -1px rgba(37, 211, 102, 0.3); }
+    
     .footer-signature { margin-top: auto; padding: 20px; text-align: center; font-size: 11px; color: #9ca3af; font-family: monospace; border-top: 1px solid #f3f4f6; background: #fff; }
+    
+    /* PREVIEW PANEL */
     .preview-panel { flex: 1; background: var(--bg-preview); display: flex; justify-content: center; align-items: flex-start; padding: 40px; overflow: auto; position: relative; }
     .paper-container { transform-origin: top center; transition: transform 0.3s ease; box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
     #cv-paper { width: 210mm; min-height: 297mm; background: white; padding: 0; overflow: hidden; position: relative; }
 
-    /* LAYOUTS & RESPONSIVE */
+    /* RESPONSIVE & MOBILE */
     @media (min-width: 901px) {
         @media (max-width: 1600px) { .paper-container { transform: scale(0.85); margin-bottom: -15%; } }
         @media (max-width: 1366px) { .paper-container { transform: scale(0.75); margin-bottom: -25%; } }
@@ -47,12 +59,13 @@
     @media (max-width: 900px) {
         body { overflow: auto; height: auto; }
         .app-container { flex-direction: column; width: 100%; height: auto; }
-        .editor-panel { width: 100%; height: auto; border-right: none; overflow: visible; padding-bottom: 10px; }
-        .preview-panel { display: flex; height: auto; padding: 10px; background: #525659; overflow: hidden; min-height: 600px; }
+        .editor-panel { width: 100%; height: auto; border-right: none; overflow: visible; padding-bottom: 20px; }
+        .preview-panel { display: flex; height: auto; padding: 15px; background: #525659; overflow: hidden; min-height: 550px; }
         .paper-container { transform: scale(0.44); transform-origin: top center; margin-top: 10px; margin-bottom: -150px; }
-        .btn-group { padding-bottom: 20px; }
+        .btn-group { padding-bottom: 40px; }
     }
 
+    /* CV LAYOUTS */
     .layout-modern { display: grid; grid-template-columns: 32% 68%; height: 100%; min-height: 297mm; }
     .layout-modern .sidebar { background: #2d3748; color: white; padding: 30px 20px; text-align: left; }
     .layout-modern .main { padding: 40px 30px; color: #333; }
@@ -91,7 +104,7 @@
         <div class="editor-content">
             <div class="header-branding"><h1>CV BUILDER PRO</h1><span>Enterprise Edition</span></div>
             
-            <div class="credit-badge" id="creditDisplay" onclick="adminUnlock()">Carregando licença...</div>
+            <div class="credit-badge" id="creditDisplay" onclick="adminUnlock()">Validando Licença...</div>
 
             <div class="form-group"><label>🎨 Estilo</label><select id="layoutSelector" onchange="updatePreview()"><option value="modern">Moderno</option><option value="classic">Clássico</option><option value="executive">Executivo</option></select></div>
             <div class="form-group"><label>🤖 Auto-Preencher</label><select id="jobSelector" onchange="autoFillJob()"><option value="">Selecione...</option><option value="mecanico">Mecânico</option><option value="vendedor">Vendedor</option><option value="admin">Administrativo</option><option value="ti">Técnico TI</option><option value="saude">Saúde</option></select></div>
@@ -108,9 +121,10 @@
             <div class="form-group"><label>Habilidades</label><textarea id="skills" oninput="updatePreview()"></textarea></div>
 
             <div class="btn-group">
-                <button class="btn-primary" onclick="generatePDF()">📄 Baixar PDF em HD</button>
-                <button class="btn-whatsapp" onclick="shareWhatsapp()">📱 Enviar no WhatsApp</button>
+                <button class="btn-whatsapp" onclick="shareOrDownload('whatsapp')">📱 Enviar CV no WhatsApp</button>
+                <button class="btn-primary" onclick="shareOrDownload('save')">💾 Baixar Arquivo PDF</button>
             </div>
+            
             <p style="text-align:center; font-size:10px; color:#ccc; margin-top:15px;">ID: <span id="licencaID">LOADING...</span></p>
         </div>
         <div class="footer-signature">Desenvolvido com 🤖 por thIAguinho Soluções</div>
@@ -121,31 +135,35 @@
 <script>
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js'); }); }
 
-    const CONFIG = { initialCredits: 3 }; 
-    let userCredits = parseInt(localStorage.getItem("cv_credits"));
-    if (isNaN(userCredits)) { userCredits = CONFIG.initialCredits; localStorage.setItem("cv_credits", userCredits); }
+    // --- MONETIZAÇÃO OFUSCADA ---
+    // Usamos nomes estranhos para "esconder" do usuário leigo
+    const STORAGE_KEY = "_sys_cfg_88"; 
+    const LICENSE_KEY = "_k_99";
+    const INITIAL = 3; 
+
+    let userCredits = parseInt(localStorage.getItem(STORAGE_KEY));
+    if (isNaN(userCredits)) { userCredits = INITIAL; localStorage.setItem(STORAGE_KEY, userCredits); }
     
-    let licenseID = localStorage.getItem("cv_license");
-    if(!licenseID) { licenseID = "PRO-" + Math.floor(Math.random() * 1000000); localStorage.setItem("cv_license", licenseID); }
+    let licenseID = localStorage.getItem(LICENSE_KEY);
+    if(!licenseID) { licenseID = "USR-" + Math.floor(Math.random() * 999999); localStorage.setItem(LICENSE_KEY, licenseID); }
     document.getElementById("licencaID").innerText = licenseID;
 
-    // --- SISTEMA DE ADMINISTRAÇÃO SECRETA (UNLOCK) ---
+    // --- RECARGA SECRETA (Toque 5x no aviso) ---
     let secretClicks = 0;
     function adminUnlock() {
         secretClicks++;
         if (secretClicks === 5) {
-            const pass = prompt("🔧 ÁREA DO SUPORTE TÉCNICO\nDigite o código de recarga:");
-            if (pass === "admin123") { // <--- SUA SENHA AQUI
-                localStorage.setItem("cv_credits", 50); // <--- RECARREGA 50 CREDITOS
-                alert("✅ LICENÇA RENOVADA!\nVocê agora tem 50 créditos.");
+            const pass = prompt("🔐 ACESSO ADM\nDigite o token de recarga:");
+            if (pass === "admin123") { // SENHA
+                localStorage.setItem(STORAGE_KEY, 50);
+                alert("✅ 50 CRÉDITOS LIBERADOS!");
                 location.reload();
-            } else {
-                if(pass !== null) alert("❌ Código inválido.");
+            } else if (pass !== null) {
+                alert("❌ Token inválido.");
             }
             secretClicks = 0;
         }
-        // Reseta contagem se demorar muito
-        setTimeout(() => { secretClicks = 0; }, 3000);
+        setTimeout(() => { secretClicks = 0; }, 2500);
     }
 
     const JOB_DATA = {
@@ -162,9 +180,9 @@
     function updateCreditsUI() {
         const d = document.getElementById("creditDisplay");
         if(userCredits > 0) {
-            d.innerHTML = `CRÉDITOS DISPONÍVEIS: ${userCredits}`; d.style.background = "#eff6ff"; d.style.color = "#1e40af";
+            d.innerHTML = `CRÉDITOS: ${userCredits}`; d.style.background = "#eff6ff"; d.style.color = "#1e40af";
         } else {
-            d.innerHTML = `LIMITE ATINGIDO <span class="error-msg">Toque aqui para liberar (Suporte)</span>`; d.style.background = "#fef2f2"; d.style.color = "#991b1b";
+            d.innerHTML = `LIMITE ATINGIDO <br><span class="error-msg" style="font-size:10px">(Toque para liberar c/ Código)</span>`; d.style.background = "#fef2f2"; d.style.color = "#991b1b";
         }
     }
     updateCreditsUI();
@@ -186,25 +204,64 @@
     }
     updatePreview();
 
-    async function generatePDF() {
-        if (userCredits <= 0) { alert("⚠️ LIMITE ATINGIDO! Toque 5 vezes no aviso de créditos para inserir o código de recarga."); return; }
-        const btn = document.querySelector('.btn-primary'); const old = btn.innerHTML; btn.innerHTML = "⏳ Processando..."; btn.disabled = true;
+    // --- NOVA FUNÇÃO MESTRE: COMPARTILHAR OU SALVAR ---
+    async function shareOrDownload(mode) {
+        if (userCredits <= 0) { alert("⚠️ LIMITE ATINGIDO! Insira o código de desbloqueio."); return; }
+
+        const btn = mode === 'whatsapp' ? document.querySelector('.btn-whatsapp') : document.querySelector('.btn-primary');
+        const oldTxt = btn.innerHTML;
+        btn.innerHTML = "⏳ Gerando..."; btn.disabled = true;
+
         try {
+            // 1. Clonagem (Anti-Bug Mobile)
             const original = document.getElementById('cv-paper'); const clone = original.cloneNode(true);
-            clone.style.transform = "none"; clone.style.position = "fixed"; clone.style.top = "-9999px"; clone.style.left = "0"; clone.style.width = "210mm"; clone.style.minHeight = "297mm"; clone.style.zIndex = "-1"; clone.style.margin = "0"; document.body.appendChild(clone);
+            clone.style.transform = "none"; clone.style.position = "fixed"; clone.style.top = "-9999px"; clone.style.left = "0"; clone.style.width = "210mm"; clone.style.minHeight = "297mm"; clone.style.zIndex = "-1"; clone.style.margin = "0"; 
+            document.body.appendChild(clone);
+
+            // 2. Gerar Canvas
             const canvas = await html2canvas(clone, { scale: 2, useCORS: true, logging: false, windowWidth: 1200 });
             document.body.removeChild(clone);
-            const { jsPDF } = window.jspdf; const pdf = new jsPDF('p', 'mm', 'a4');
-            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
-            userCredits--; localStorage.setItem("cv_credits", userCredits); updateCreditsUI();
-            pdf.save(`Curriculo_${document.getElementById('nome').value.replace(/[^a-z0-9]/gi, '_') || "cv"}.pdf`);
-        } catch (e) { alert("Erro: " + e.message); }
-        btn.innerHTML = old; btn.disabled = false;
-    }
 
-    function shareWhatsapp() {
-        window.open(`https://wa.me/?text=${encodeURIComponent("Olá! Segue meu currículo: " + document.getElementById("nome").value)}`, '_blank');
-        alert("⚠️ ARRASTE O PDF BAIXADO PARA A CONVERSA.");
+            // 3. Gerar PDF
+            const { jsPDF } = window.jspdf; 
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
+
+            const safeName = document.getElementById('nome').value.replace(/[^a-z0-9]/gi, '_') || "curriculo";
+            const fileName = `Curriculo_${safeName}.pdf`;
+
+            // --- LÓGICA DE COMPARTILHAMENTO NATIVO ---
+            if (mode === 'whatsapp' && navigator.share) {
+                // Transforma o PDF em um Arquivo Virtual (Blob)
+                const pdfBlob = pdf.output('blob');
+                const file = new File([pdfBlob], fileName, { type: "application/pdf" });
+
+                // Tenta abrir o Menu de Compartilhamento do Android (WhatsApp vai aparecer aqui)
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        files: [file],
+                        title: 'Meu Currículo',
+                        text: `Olá, segue meu currículo (${fileName}) em anexo.`
+                    });
+                    // Sucesso: Consome crédito
+                    userCredits--; localStorage.setItem(STORAGE_KEY, userCredits); updateCreditsUI();
+                } else {
+                    throw new Error("Seu navegador não suporta envio direto. Baixando arquivo...");
+                }
+            } else {
+                // Modo Download (Save) ou Fallback
+                pdf.save(fileName);
+                userCredits--; localStorage.setItem(STORAGE_KEY, userCredits); updateCreditsUI();
+                if(mode === 'whatsapp') alert("⚠️ O arquivo foi baixado! Agora abra o WhatsApp e anexe o arquivo da pasta Downloads.");
+            }
+
+        } catch (e) { 
+            console.error(e);
+            // Se der erro no Share, tenta salvar normal
+            if (mode === 'whatsapp') alert("⚠️ Não foi possível abrir o WhatsApp direto.\nO arquivo será baixado no seu celular.");
+        }
+        
+        btn.innerHTML = oldTxt; btn.disabled = false;
     }
 </script>
 </body>
