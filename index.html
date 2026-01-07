@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Gerador de Currículo PRO</title>
 
 <link rel="manifest" href="manifest.json">
@@ -16,14 +16,14 @@
 <style>
     /* --- ESTILOS DO SISTEMA --- */
     :root { --primary: #2563eb; --secondary: #1e40af; --bg-app: #f8f9fa; --bg-panel: #ffffff; --bg-preview: #525659; --text: #1f2937; --border: #e5e7eb; --input-bg: #f9fafb; }
-    * { box-sizing: border-box; outline: none; }
+    * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
     body { margin: 0; padding: 0; background: var(--bg-app); font-family: 'Roboto', sans-serif; color: var(--text); height: 100vh; overflow: hidden; }
     
     .app-container { display: flex; width: 100vw; height: 100vh; }
     
     /* PAINEL ESQUERDO (EDITOR) */
     .editor-panel { width: 450px; min-width: 350px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; height: 100%; overflow-y: auto; z-index: 10; padding-bottom: 20px; }
-    .editor-content { padding: 30px; padding-bottom: 60px; }
+    .editor-content { padding: 30px; padding-bottom: 80px; }
     
     .header-branding { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid var(--primary); }
     .header-branding h1 { margin: 0; font-size: 20px; color: var(--primary); font-weight: 700; }
@@ -62,7 +62,7 @@
     @media (max-width: 900px) {
         body { overflow: auto; height: auto; }
         .app-container { flex-direction: column; width: 100%; height: auto; }
-        .editor-panel { width: 100%; height: auto; border-right: none; overflow: visible; }
+        .editor-panel { width: 100%; height: auto; border-right: none; overflow: visible; padding-bottom: 40px; }
         .preview-panel { display: flex; height: auto; padding: 10px; background: #525659; min-height: 600px; overflow: hidden; }
         .paper-container { transform: scale(0.44); transform-origin: top center; margin-top: 10px; margin-bottom: -150px; }
         .btn-group { padding-bottom: 30px; }
@@ -117,9 +117,9 @@
             <div class="form-group"><label>Habilidades</label><textarea id="skills" oninput="updatePreview()"></textarea></div>
 
             <div class="btn-group">
-                <button class="btn-whatsapp" onclick="processAction('share')">📱 Enviar via WhatsApp</button>
-                <button class="btn-primary" onclick="processAction('share')">💾 Salvar / Baixar</button>
+                <button class="btn-whatsapp" onclick="forceAndroidShare()">📱 Enviar / Baixar (WhatsApp)</button>
             </div>
+            <p style="text-align:center; font-size:11px; color:#666; margin-top:5px;">ℹ️ Ao clicar, escolha WhatsApp ou "Salvar nos Arquivos"</p>
             
             <p style="text-align:center; font-size:10px; color:#ccc; margin-top:15px;">ID: <span id="licencaID">LOADING...</span></p>
         </div>
@@ -131,10 +131,12 @@
 </div>
 
 <script>
+    // 1. SERVICE WORKER
     if ('serviceWorker' in navigator) { 
         window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js')); 
     }
 
+    // 2. CONFIGURAÇÕES
     const KEY_CREDITS = "_sys_config_x99"; 
     const KEY_ID = "_sys_id_user";
     const CREDITS_INITIAL = 3; 
@@ -146,14 +148,15 @@
     if(!userID) { userID = "USR-" + Math.floor(Math.random() * 999999); localStorage.setItem(KEY_ID, userID); }
     document.getElementById("licencaID").innerText = userID;
 
+    // 3. ADMIN UNLOCK
     let tapCount = 0;
     function adminUnlock() {
         tapCount++;
         if (tapCount === 5) {
-            const pwd = prompt("🔐 SUPORTE TÉCNICO\nInsira o código de liberação:");
+            const pwd = prompt("🔐 SUPORTE TÉCNICO\nInsira o código:");
             if (pwd === "admin123") {
                 localStorage.setItem(KEY_CREDITS, 50);
-                alert("✅ PACOTE LIBERADO!\nVocê agora tem 50 créditos.");
+                alert("✅ 50 CRÉDITOS LIBERADOS!");
                 location.reload();
             } else if (pwd !== null) {
                 alert("❌ Código inválido.");
@@ -163,18 +166,20 @@
         setTimeout(() => { tapCount = 0; }, 2000);
     }
 
+    // 4. UI UPDATE
     function updateCreditsUI() {
         const el = document.getElementById("creditDisplay");
         if(userCredits > 0) {
             el.innerHTML = `CRÉDITOS RESTANTES: ${userCredits}`;
             el.style.background = "#eff6ff"; el.style.color = "#1e40af";
         } else {
-            el.innerHTML = `LIMITE ATINGIDO<br><span style="font-size:10px">(Toque para liberar com código)</span>`;
+            el.innerHTML = `LIMITE ATINGIDO<br><span style="font-size:10px">(Toque para liberar)</span>`;
             el.style.background = "#fef2f2"; el.style.color = "#991b1b";
         }
     }
     updateCreditsUI();
 
+    // 5. PREENCHIMENTO INTELIGENTE
     const JOB_DATA = {
         "mecanico": { resumo: "Experiência em manutenção preventiva e corretiva.", skills: "• Injeção Eletrônica\n• Freios\n• Câmbio", exp: "Oficina X (2020-Atual)\nMecânico Geral." },
         "vendedor": { resumo: "Focado em metas e atendimento ao cliente.", skills: "• Negociação\n• CRM\n• Vendas", exp: "Loja Y (2021-Atual)\nVendedor Sênior." },
@@ -204,7 +209,6 @@
             skills: document.getElementById("skills").value, 
             layout: document.getElementById("layoutSelector").value 
         };
-        
         const p = document.getElementById("cv-paper"); p.className = ""; p.classList.add(`layout-${d.layout}`);
         const fmt = t => t ? t.replace(/\n/g, '<br>') : '';
         
@@ -217,71 +221,76 @@
     }
     updatePreview();
 
-    // --- CORREÇÃO DEFINITIVA PARA APK ---
-    // Em vez de diferenciar 'baixar' de 'whatsapp', FORÇAMOS o uso do Web Share
-    // para tudo. Isso faz o Android assumir o download e evita o bloqueio do WebView.
-    async function processAction(dummyType) {
-        if (userCredits <= 0) { alert("⚠️ SEU PLANO ACABOU.\nToque 5 vezes na mensagem 'LIMITE ATINGIDO' para inserir o código de recarga."); return; }
+    // --- FUNÇÃO DE FORÇA BRUTA PARA APK ---
+    async function forceAndroidShare() {
+        if (userCredits <= 0) { alert("⚠️ SEU PLANO ACABOU.\nToque 5 vezes no aviso 'LIMITE ATINGIDO' para recarregar."); return; }
 
-        const btn = document.querySelector('.btn-primary');
+        const btn = document.querySelector('.btn-whatsapp');
         const oldTxt = btn.innerHTML;
-        // Muda o texto de todos os botões para dar feedback
-        document.querySelectorAll('button').forEach(b => { b.innerHTML = "⏳ Processando..."; b.disabled = true; });
+        btn.innerHTML = "⏳ Processando..."; btn.disabled = true;
 
         try {
-            // 1. CLONAGEM SILENCIOSA
+            // 1. CLONA PARA EVITAR ERROS VISUAIS
             const original = document.getElementById('cv-paper'); 
             const clone = original.cloneNode(true);
             clone.style.transform = "none"; clone.style.position = "fixed"; clone.style.top = "-9999px"; clone.style.left = "0"; clone.style.width = "210mm"; clone.style.minHeight = "297mm"; clone.style.zIndex = "-1"; clone.style.margin = "0"; 
             document.body.appendChild(clone);
 
-            // 2. GERAÇÃO
+            // 2. GERA A IMAGEM
             const canvas = await html2canvas(clone, { scale: 2, useCORS: true, logging: false, windowWidth: 1200 });
             document.body.removeChild(clone);
 
+            // 3. GERA O PDF
             const { jsPDF } = window.jspdf; 
             const pdf = new jsPDF('p', 'mm', 'a4');
-            const pdfW = pdf.internal.pageSize.getWidth();
-            const pdfH = pdf.internal.pageSize.getHeight();
-            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdfW, pdfH);
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
+            const fileName = `Curriculo_${document.getElementById('nome').value.replace(/[^a-z0-9]/gi, '_') || 'Pro'}.pdf`;
 
-            const safeName = document.getElementById('nome').value.replace(/[^a-z0-9]/gi, '_') || "curriculo";
-            const fileName = `Curriculo_${safeName}.pdf`;
+            // 4. ESTRATÉGIA DE BYPASS PARA APK
+            let success = false;
 
-            // 3. O PULO DO GATO: USAR SEMPRE O SHARE (COMPARTILHAR)
-            // Se estiver no celular, isso abre a gaveta nativa para salvar no Drive ou mandar no Whats
-            if (navigator.share) {
-                const blob = pdf.output('blob');
-                const file = new File([blob], fileName, { type: "application/pdf" });
-                
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        files: [file],
-                        title: 'Currículo Pronto',
-                        text: 'Aqui está seu currículo em PDF.'
-                    });
-                    // Só desconta se deu certo
-                    userCredits--; localStorage.setItem(KEY_CREDITS, userCredits); updateCreditsUI();
-                } else {
-                    // Fallback para download clássico (PC)
-                    pdf.save(fileName);
-                    userCredits--; localStorage.setItem(KEY_CREDITS, userCredits); updateCreditsUI();
+            // TENTATIVA 1: Web Share API (A mais provável de funcionar)
+            try {
+                if (navigator.share && navigator.canShare) {
+                    const blob = pdf.output('blob');
+                    const file = new File([blob], fileName, { type: "application/pdf" });
+                    
+                    if (navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            files: [file],
+                            title: 'Currículo PDF',
+                            text: 'Segue meu currículo em anexo.'
+                        });
+                        success = true;
+                    }
                 }
-            } else {
-                // PC Desktop (Download direto)
-                pdf.save(fileName);
-                userCredits--; localStorage.setItem(KEY_CREDITS, userCredits); updateCreditsUI();
+            } catch (e) {
+                console.log("Share falhou: " + e.message);
+            }
+
+            // TENTATIVA 2: Fallback para Download (Se o Share falhar ou não existir)
+            if (!success) {
+                try {
+                    pdf.save(fileName);
+                    // Damos um alerta para o usuário saber que tentamos baixar
+                    alert("⚠️ Tentativa de salvamento feita.\nSe não abrir o compartilhamento, verifique sua pasta DOWNLOADS.");
+                    success = true;
+                } catch(e) {
+                    alert("❌ ERRO CRÍTICO: O aplicativo não tem permissão para salvar arquivos.\n\nSOLUÇÃO: Dê permissão de 'Armazenamento' nas configurações do celular.");
+                }
+            }
+
+            if(success) {
+                userCredits--; 
+                localStorage.setItem(KEY_CREDITS, userCredits); 
+                updateCreditsUI();
             }
 
         } catch (e) {
-            console.error(e);
-            alert("⚠️ Erro ao processar. Tente novamente.");
+            alert("Erro inesperado: " + e.message);
         }
         
-        // Restaura botões
-        document.querySelector('.btn-primary').innerHTML = "💾 Salvar / Baixar";
-        document.querySelector('.btn-whatsapp').innerHTML = "📱 Enviar via WhatsApp";
-        document.querySelectorAll('button').forEach(b => b.disabled = false);
+        btn.innerHTML = oldTxt; btn.disabled = false;
     }
 </script>
 </body>
