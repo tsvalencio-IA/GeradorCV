@@ -2,11 +2,11 @@
   "name": "Gerador de Currículo PRO",
   "short_name": "CV Pro",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#f0f2f5",
   "theme_color": "#2563eb",
   "orientation": "portrait",
-  "scope": "./",
   "icons": [
     {
       "src": "icon.png",
